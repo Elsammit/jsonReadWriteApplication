@@ -1,0 +1,12 @@
+[
+	{
+    	"type":"AAA",
+        "name":"aaa",
+        "age":"20"
+    },
+    {
+    	"type":"BBB",
+        "name":"bbb",
+        "age":"30"
+    }
+]

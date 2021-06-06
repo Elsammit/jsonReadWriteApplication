@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta  content="text/html; charset=UTF-8">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script type="text/javascript" src="jsonRead.js"></script>
+        </head>
+        <body onload="DoFirstScript()">
+            <input type="file" onChange="fileChanged(this)" multiple>
+            <br/>
+            <label>タイプ:</label>
+            <input type="text" id="type">
+            <label>名前:</label>
+            <input type="text" id="name">
+            <label>年齢:</label>
+            <input type="text" id="age">
+            <button type="button" onClick="ClickFunc()" >追加</button>
+            <br/>
+            <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
+            <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
+            <table border="1" id="table1">
+                <tr>
+                    <th><input type="checkbox" id="select"></th>
+                    <th>タイプ</th>
+                    <th>名前</th>
+                    <th>年齢</th>
+                </tr>
+            </table>
+            <dialog>
+                <label>タイプ:</label>
+                <p>選択したデータを削除しますか？</p>
+                <button id="DeleteOK">OK</button>
+                <button id="closep">キャンセル</button>
+            </dialog>
+            <button id="showp">ダイアログを開く</button>
+        </body>
+    </html>
