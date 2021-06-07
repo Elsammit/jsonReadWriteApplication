@@ -43,15 +43,16 @@ function fileChanged(input){
 
                 let checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
                 cell1.innerHTML = checkBox;
-                cell2.innerHTML = "<input type='text' id='type" + j + "' onChange='test(" + (j*10+1) + ")' value='" + huga[j].type + "'>"
-                cell3.innerHTML = "<input type='text' id='name" + j + "' onChange='test(" + (j*10+2) + ")' value='" + huga[j].name + "'>"
-                cell4.innerHTML = "<input type='text' id='age" + j + "' onChange='test(" + (j*10+3) + ")' value='" + huga[j].age + "'>"
+                cell2.innerHTML = "<input type='text' id='type" + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + huga[j].type + "'>"
+                cell3.innerHTML = "<input type='text' id='name" + j + "' onChange='ChangeText(" + (j*10+2) + ")' value='" + huga[j].name + "'>"
+                cell4.innerHTML = "<input type='text' id='age" + j + "' onChange='ChangeText(" + (j*10+3) + ")' value='" + huga[j].age + "'>"
             }
         }
     }
 }
 
-function test(input){
+// テーブル内文字列変更時の割り込み処理.
+function ChangeText(input){
     let cell = input % 10;
     let Rows = Math.floor(input / 10);
     let idbuf;
@@ -105,6 +106,7 @@ function WriteToFile(){
     link.click();
 }
 
+// json to csv変換.
 function json2csv(json) {
     var header = Object.keys(json[1]).join(',') + "\n";
 
@@ -117,6 +119,7 @@ function json2csv(json) {
     return header + body;
 }
 
+// csv to json変換.
 function csv2json(csvArray){
     var jsonArray = [];
 
@@ -133,7 +136,7 @@ function csv2json(csvArray){
     return jsonArray;
 }
   
-
+// csvファイルへのファイル書き込み.
 function WriteToCSV(){
     let hugastring = json2csv(huga);
     console.log(hugastring);
