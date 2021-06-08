@@ -11,8 +11,9 @@ console.log(simpleDataParsed["bbb"]['age']);
 
 let reader = new FileReader();
 
-let huga;
+let huga = [];
 function fileChanged(input){
+    document.getElementById("InputList").style.opacity = 1.0;
     huga = "";
     for(let i = 0; i < input.files.length; i++){
 
@@ -27,7 +28,9 @@ function fileChanged(input){
                 console.log("csvFile!!");
                 huga = csv2json(reader.result);
             }else{
-                console.log("??? file!! " + input.files[i].name)
+                console.log("??? file!! " + input.files[i].name);
+                alert("csvファイルかjsonファイルを選択ください");
+                return;
             }
 
             var table = document.getElementById('table1'); 
