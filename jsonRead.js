@@ -1,14 +1,3 @@
-let simpleData = {"aaa":{name:"test", age:20},"bbb":{name:"AAA", age:30}};
-
-let simpleDataJSON = JSON.stringify(simpleData);
-console.log(simpleDataJSON);
-
-let simpleDataParsed = JSON.parse(simpleDataJSON);
-console.log(simpleDataParsed);
-
-console.log(simpleDataParsed["aaa"].name);
-console.log(simpleDataParsed["bbb"]['age']);
-
 let reader = new FileReader();
 
 let huga = [];
@@ -24,9 +13,12 @@ function fileChanged(input){
             if( /\.(json)$/i.test(input.files[i].name) ){
                 console.log("jsonFile!!");
                 huga = JSON.parse(reader.result);
-            }else if( /\.(csv)$/i.test(input.files[i].name) ){
+            }else if( /\.(csv)$/i.test(input.files[i].name)){
                 console.log("csvFile!!");
                 huga = csv2json(reader.result);
+            }else if(/\.(conf)$/i.test(input.files[i].name)){
+                console.log("confFile!!");
+                huga = confTojson(reader.result);
             }else{
                 console.log("??? file!! " + input.files[i].name);
                 alert("csvファイルかjsonファイルを選択ください");
@@ -47,8 +39,8 @@ function fileChanged(input){
                 let checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
                 cell1.innerHTML = checkBox;
                 cell2.innerHTML = "<input type='text' id='type" + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + huga[j].type + "'>"
-                cell3.innerHTML = "<input type='text' id='name" + j + "' onChange='ChangeText(" + (j*10+2) + ")' value='" + huga[j].name + "'>"
-                cell4.innerHTML = "<input type='text' id='age" + j + "' onChange='ChangeText(" + (j*10+3) + ")' value='" + huga[j].age + "'>"
+                cell3.innerHTML = "<input type='text' id='japan" + j + "' onChange='ChangeText(" + (j*10+2) + ")' value='" + huga[j].japan + "'>"
+                cell4.innerHTML = "<input type='text' id='us" + j + "' onChange='ChangeText(" + (j*10+3) + ")' value='" + huga[j].us + "'>"
             }
         }
     }
@@ -66,12 +58,12 @@ function ChangeText(input){
             huga[Rows].type = document.getElementById(idbuf).value;
             break;
         case 2:
-            idbuf = "name" + Rows;
-            huga[Rows].name = document.getElementById(idbuf).value;
+            idbuf = "japan" + Rows;
+            huga[Rows].japan = document.getElementById(idbuf).value;
             break;
         case 3:
-            idbuf = "age" + Rows;
-            huga[Rows].age = document.getElementById(idbuf).value;
+            idbuf = "us" + Rows;
+            huga[Rows].us = document.getElementById(idbuf).value;
             break;
         default:
             break;
@@ -81,9 +73,9 @@ function ChangeText(input){
 
 function ClickFunc(){
     let type = document.getElementById('type').value;
-    let name = document.getElementById('name').value; 
-    let age = document.getElementById('age').value; 
-    let data = {type:type, name:name, age:age}
+    let japan = document.getElementById('japan').value; 
+    let us = document.getElementById('us').value; 
+    let data = {type:type, japan:japan, us:us}
     huga.push(data);
     
     var table = document.getElementById('table1'); 
@@ -96,8 +88,8 @@ function ClickFunc(){
     let checkBox = '<input type="radio" name="selectBtn" value="select'+huga.length+' onChange="SelectCheck()">'
     cell1.innerHTML = checkBox;
     cell2.innerHTML = "<input type='text' value='" + type + "'>"
-    cell3.innerHTML = "<input type='text' value='" + name + "'>"
-    cell4.innerHTML = "<input type='text' value='" + age + "'>"
+    cell3.innerHTML = "<input type='text' value='" + japan + "'>"
+    cell4.innerHTML = "<input type='text' value='" + us + "'>"
 }
 
 function WriteToFile(){
@@ -138,17 +130,60 @@ function csv2json(csvArray){
     }
     return jsonArray;
 }
-  
+
+function confTojson(jsonArray){
+    var jpNum = jsonArray.lastIndexOf( '[日本語]' );
+    var usNum = jsonArray.lastIndexOf( '[英語]' );
+    var result = jsonArray.substr( jpNum+6, usNum-6 );
+    var result2 = jsonArray.substr( usNum+6,  jsonArray.length-usNum-6);
+    console.log(result2);
+    var mojiJp = "";
+    var mojiUs = "";
+
+    var lineJP = result.split('\n');
+    var lineUS = result2.split('\n');
+    let jsonData = [];
+
+    for(let i=1;i<lineJP.length-2;i++){
+        mojiJp = lineJP[i].split('=');
+        mojiUs = lineUS[i-1].split('=');
+        let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
+        jsonData.push(buf);
+    }
+    console.log(jsonData);
+    return jsonData;
+}
+
 // csvファイルへのファイル書き込み.
 function WriteToCSV(){
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     let hugastring = json2csv(huga);
     console.log(hugastring);
-    let blob = new Blob([hugastring],{type:"text/plan"});
+    let blob = new Blob([bom, hugastring],{type:"text/plan"});
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = '作ったファイル.csv';
     link.click();
 }
+
+function WriteConfigFile(){
+    let writeString = "";
+    writeString += "[日本語] \n";
+    for(let i = 0; i < huga.length; i++){
+        writeString += huga[i].type+"="+ huga[i].japan+"\n";
+    }
+    writeString += "\n";
+    writeString += "[英語] \n";
+    for(let i = 0; i < huga.length; i++){
+        writeString += huga[i].type+"="+ huga[i].us+"\n";
+    }    
+    let blob = new Blob([bom, writeString],{type:"text/plan"});
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = '作ったファイル.conf';
+    link.click();
+}
+
 
 function DoFirstScript(){
     var dialog = document.querySelector('dialog');
@@ -174,5 +209,5 @@ function DoFirstScript(){
         table.deleteRow(rStr);
         dialog.close();
       }, false);
-
 }
+

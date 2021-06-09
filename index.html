@@ -12,23 +12,24 @@
             <br/>
             <div id="InputList">
                 <div id="InsertInfo">
-                    <label>タイプ:</label>
+                    <label>ニックネーム:</label>
                     <input type="text" id="type">
-                    <label>名前:</label>
-                    <input type="text" id="name">
-                    <label>年齢:</label>
-                    <input type="text" id="age">
+                    <label>名前(日本語):</label>
+                    <input type="text" id="japan">
+                    <label>名前(英語):</label>
+                    <input type="text" id="us">
                     <button type="button" onClick="ClickFunc()" >追加</button>
                     <br/>
                 </div>
                 <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
                 <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
+                <button type="button" onClick="WriteConfigFile()" >ファイル書き込み(config)</button>
                 <table border="1" id="table1">
                     <tr>
                         <th><input type="checkbox" id="select"></th>
-                        <th>タイプ</th>
-                        <th>名前</th>
-                        <th>年齢</th>
+                        <th>ニックネーム</th>
+                        <th>名前(日本語)</th>
+                        <th>名前(英語)</th>
                     </tr>
                 </table>
                 <dialog>
