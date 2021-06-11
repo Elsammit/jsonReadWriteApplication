@@ -8,7 +8,8 @@
             <link rel="stylesheet" href="style.css">
         </head>
         <body onload="DoFirstScript()" id="MainArea">
-            <input type="file" onChange="fileChanged(this)" multiple>
+            <input id="file1" type="file" onChange="fileChanged(this)" multiple>
+            <input id="file2" type="file" onChange="fileAdd(this)" multiple>
             <br/>
             <div id="InputList">
                 <div id="InsertInfo">

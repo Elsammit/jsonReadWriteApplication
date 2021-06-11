@@ -4,15 +4,27 @@ let huga = [];
 function fileChanged(input){
     document.getElementById("InputList").style.opacity = 1.0;
     huga = "";
-    for(let i = 0; i < input.files.length; i++){
+    DoFileToListAdd(input);
+}
 
+function fileAdd(input){
+    DoFileToListAdd(input);
+}
+
+function DoFileToListAdd(input){
+    for(let i = 0; i < input.files.length; i++){
         reader.readAsText(input.files[i], 'UTF-8');
         reader.onload = () =>{
             console.log(reader.result);
             
             if( /\.(json)$/i.test(input.files[i].name) ){
                 console.log("jsonFile!!");
-                huga = JSON.parse(reader.result);
+                if(huga ==""){
+                    huga = JSON.parse(reader.result);
+                }else{
+                    huga.push(JSON.parse(reader.result));
+                }
+                
             }else if( /\.(csv)$/i.test(input.files[i].name)){
                 console.log("csvFile!!");
                 huga = csv2json(reader.result);
@@ -211,3 +223,14 @@ function DoFirstScript(){
       }, false);
 }
 
+function populateDB(tx) {
+    tx.executeSql('select * from testTable');
+}
+
+function errorCB(err) {
+    alert("SQL 実行中にエラーが発生しました: "+err);
+}
+
+function successCB() {
+    alert("成功しました。");
+}
