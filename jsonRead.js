@@ -1,24 +1,73 @@
 let reader = new FileReader();
 
 let huga = [];
+let fileCount = 1;
 function fileChanged(input){
     document.getElementById("InputList").style.opacity = 1.0;
     huga = "";
-    for(let i = 0; i < input.files.length; i++){
+    DoFileToListAdd(input,0);
+    let MessageTag = document.createElement("p");
+    var newContent = document.createTextNode("②連結したいファイルを選択ください");
+    MessageTag.appendChild(newContent);
+    let ParentInput = document.getElementById("inputFileList");
+    ParentInput.appendChild(MessageTag);
 
+    AddFileSelectChild();
+}
+
+function fileAdd(input){
+    DoFileToListAdd(input,1);
+    AddFileSelectChild();
+}
+
+function AddFileSelectChild(){
+    let FileInputtag = document.createElement("input");
+    FileInputtag.setAttribute('type','file');
+    FileInputtag.setAttribute('id','file'+fileCount);
+    fileCount++;
+    FileInputtag.setAttribute('onChange','fileAdd(this)');
+    let ParentInput = document.getElementById("inputFileList");
+    ParentInput.appendChild(FileInputtag);
+}
+
+function DoFileToListAdd(input, flg){
+    for(let i = 0; i < input.files.length; i++){
         reader.readAsText(input.files[i], 'UTF-8');
         reader.onload = () =>{
             console.log(reader.result);
             
             if( /\.(json)$/i.test(input.files[i].name) ){
                 console.log("jsonFile!!");
-                huga = JSON.parse(reader.result);
+                if(flg == 0){
+                    huga = JSON.parse(reader.result);
+                }else{
+                    var test = JSON.parse(reader.result);
+                    for(let j=0;j<test.length;j++){
+                        huga.push(test[j]);
+                    }
+                }
+                
             }else if( /\.(csv)$/i.test(input.files[i].name)){
                 console.log("csvFile!!");
-                huga = csv2json(reader.result);
+                if(flg == 0){
+                    huga = csv2json(reader.result);
+                }else{
+                    var test = csv2json(reader.result);
+                    for(let j=0;j<test.length;j++){
+                        huga.push(test[j]);
+                    }
+                }
+                
             }else if(/\.(conf)$/i.test(input.files[i].name)){
                 console.log("confFile!!");
-                huga = confTojson(reader.result);
+                if(flg==0){
+                    huga = confTojson(reader.result);
+                }else{
+                    var test = confTojson(reader.result);
+                    for(let j=0;j<test.length;j++){
+                        huga.push(test[j]);
+                    }
+                }
             }else{
                 console.log("??? file!! " + input.files[i].name);
                 alert("csvファイルかjsonファイルを選択ください");
@@ -168,6 +217,7 @@ function WriteToCSV(){
 
 function WriteConfigFile(){
     let writeString = "";
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     writeString += "[日本語] \n";
     for(let i = 0; i < huga.length; i++){
         writeString += huga[i].type+"="+ huga[i].japan+"\n";
@@ -201,8 +251,8 @@ function DoFirstScript(){
     }, false);
     btn_delete.addEventListener('click', function() {
         let r = $('input[name="selectBtn"]:checked').val();
-        var table = document.getElementById('table1'); 
-        let rStr = Number(r.substr(-1))+1;
+        var table = document.getElementById('table1'); 1
+        let rStr = Number(r.substr("select".length - r.length))+1;
         console.log("rows:"+table.rows.length+" r:"+r+" rStr:"+rStr);
 
         huga.splice(rStr-1,1);
@@ -210,4 +260,3 @@ function DoFirstScript(){
         dialog.close();
       }, false);
 }
-

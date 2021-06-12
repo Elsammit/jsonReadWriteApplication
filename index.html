@@ -8,10 +8,13 @@
             <link rel="stylesheet" href="style.css">
         </head>
         <body onload="DoFirstScript()" id="MainArea">
-            <input type="file" onChange="fileChanged(this)" multiple>
-            <br/>
+            <div id = inputFileList>
+                <p>①ファイルを選択ください</p>
+                <input id="file1" type="file" onChange="fileChanged(this)" multiple>
+            </div>
             <div id="InputList">
                 <div id="InsertInfo">
+                    <p>③追加するリストを記入ください</p>
                     <label>ニックネーム:</label>
                     <input type="text" id="type">
                     <label>名前(日本語):</label>
@@ -21,24 +24,28 @@
                     <button type="button" onClick="ClickFunc()" >追加</button>
                     <br/>
                 </div>
+                <p>④出力するファイルを選択ください</p>
                 <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
                 <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
                 <button type="button" onClick="WriteConfigFile()" >ファイル書き込み(config)</button>
-                <table border="1" id="table1">
-                    <tr>
-                        <th><input type="checkbox" id="select"></th>
-                        <th>ニックネーム</th>
-                        <th>名前(日本語)</th>
-                        <th>名前(英語)</th>
-                    </tr>
-                </table>
                 <dialog>
                     <label>タイプ:</label>
                     <p>選択したデータを削除しますか？</p>
                     <button id="DeleteOK">OK</button>
                     <button id="closep">キャンセル</button>
                 </dialog>
-                <button id="showp">ダイアログを開く</button>
+                <p>⑤削除したい項目があればラジオボタン選択の上ボタンを押下</p>
+                <button id="showp">データ削除</button>
+                <p>項目リスト 保存時、こちらのリストの内容が保存されます</p>
+                <table border="1" id="table1">
+                    <tr>
+                        <th>削除選択</th>
+                        <th>ニックネーム</th>
+                        <th>名前(日本語)</th>
+                        <th>名前(英語)</th>
+                    </tr>
+                </table>
+
             </div>
         </body>
     </html>
