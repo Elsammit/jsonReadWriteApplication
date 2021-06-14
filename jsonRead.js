@@ -1,12 +1,16 @@
 let reader = new FileReader();
 
-let huga = [];
-let fileCount = 1;
+let huga = [];      // 管理するデータリスト
+let fileCount = 1;  // ファイル選択widget数.
+
+// 第1ファイル選択画面にてファイルを選択した際の割り込み.
 function fileChanged(input){
     document.getElementById("InputList").style.opacity = 1.0;
-    huga = "";
-    DoFileToListAdd(input,0);
-    let MessageTag = document.createElement("p");
+    huga = [];                  // 初期化.  
+    DoFileToListAdd(input,0);   // リストへの追加処理.
+
+    // 次の追加ファイル選択widget表示.
+    let MessageTag = document.createElement("p");   
     var newContent = document.createTextNode("②連結したいファイルを選択ください");
     MessageTag.appendChild(newContent);
     let ParentInput = document.getElementById("inputFileList");
@@ -20,6 +24,7 @@ function fileAdd(input){
     AddFileSelectChild();
 }
 
+// ファイル選択用Widget追加表示用.
 function AddFileSelectChild(){
     let FileInputtag = document.createElement("input");
     FileInputtag.setAttribute('type','file');
@@ -30,6 +35,7 @@ function AddFileSelectChild(){
     ParentInput.appendChild(FileInputtag);
 }
 
+// ファイルからデータを読み出してデータをリストへ書き込み.
 function DoFileToListAdd(input, flg){
     for(let i = 0; i < input.files.length; i++){
         reader.readAsText(input.files[i], 'UTF-8');
@@ -180,6 +186,7 @@ function csv2json(csvArray){
     return jsonArray;
 }
 
+// conf to json.
 function confTojson(jsonArray){
     var jpNum = jsonArray.lastIndexOf( '[日本語]' );
     var usNum = jsonArray.lastIndexOf( '[英語]' );
@@ -215,6 +222,7 @@ function WriteToCSV(){
     link.click();
 }
 
+// confファイルへの書き込み.
 function WriteConfigFile(){
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
