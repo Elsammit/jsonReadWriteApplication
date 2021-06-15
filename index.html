@@ -8,7 +8,7 @@
             <link rel="stylesheet" href="style.css">
         </head>
         <body onload="DoFirstScript()" id="MainArea">
-            <div id = inputFileList>
+            <div id = "inputFileList">
                 <p>①ファイルを選択ください</p>
                 <input id="file1" type="file" onChange="fileChanged(this)" multiple>
             </div>
@@ -17,26 +17,35 @@
                     <p>③追加するリストを記入ください</p>
                     <label>ニックネーム:</label>
                     <input type="text" id="type">
+                    <br/>
                     <label>名前(日本語):</label>
                     <input type="text" id="japan">
+                    <br/>
                     <label>名前(英語):</label>
                     <input type="text" id="us">
+                    <br/>
                     <button type="button" onClick="ClickFunc()" >追加</button>
                     <br/>
                 </div>
-                <p>④出力するファイルを選択ください</p>
-                <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
-                <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
-                <button type="button" onClick="WriteConfigFile()" >ファイル書き込み(config)</button>
+                <div id="OutputFile">
+                    <p>④出力するファイルを選択ください</p>
+                    <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
+                    <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
+                    <button type="button" onClick="WriteConfigFile()" >ファイル書き込み(config)</button>
+                </div>
                 <dialog>
                     <label>タイプ:</label>
                     <p>選択したデータを削除しますか？</p>
                     <button id="DeleteOK">OK</button>
                     <button id="closep">キャンセル</button>
                 </dialog>
-                <p>⑤削除したい項目があればラジオボタン選択の上ボタンを押下</p>
-                <button id="showp">データ削除</button>
-                <p>項目リスト 保存時、こちらのリストの内容が保存されます</p>
+                <div id="DeleteItem">
+                    <p>⑤削除したい項目があればラジオボタン選択の上ボタンを押下</p>
+                    <button id="showp">データ削除</button>
+                </div>
+                <div id="Message">
+                    <p>項目リスト 保存時、こちらのリストの内容が保存されます</p>
+                </div>
                 <table border="1" id="table1">
                     <tr>
                         <th>削除選択</th>
