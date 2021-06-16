@@ -126,6 +126,7 @@ function ChangeText(input){
     console.log(huga);
 }
 
+//　テーブルへのデータ追加
 function ClickFunc(){
     let type = document.getElementById('type').value;
     let japan = document.getElementById('japan').value; 
@@ -147,6 +148,7 @@ function ClickFunc(){
     cell4.innerHTML = "<input type='text' value='" + us + "'>"
 }
 
+// jsonファイルとして出力
 function WriteToFile(){
     let hugastring = JSON.stringify(huga);
     let blob = new Blob([hugastring],{type:"text/plan"});
@@ -242,7 +244,7 @@ function WriteConfigFile(){
     link.click();
 }
 
-
+// データ削除のためのポップアップ作成用
 function DoFirstScript(){
     var dialog = document.querySelector('dialog');
     var btn_show = document.getElementById('showp');
