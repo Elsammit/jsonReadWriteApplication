@@ -74,6 +74,16 @@ function DoFileToListAdd(input, flg){
                         huga.push(test[j]);
                     }
                 }
+            }else if(/\.(xml)$/i.test(input.files[i].name)){
+                console.log("XmlFile!!");
+                if(flg==0){
+                    huga = xmlTojson(reader.result);
+                }else{
+                    var test = xmlTojson(reader.result);
+                    for(let j=0;j<test.length;j++){
+                        huga.push(test[j]);
+                    }
+                }
             }else{
                 console.log("??? file!! " + input.files[i].name);
                 alert("csvファイルかjsonファイルを選択ください");
@@ -160,9 +170,9 @@ function WriteToFile(){
 
 // json to csv変換.
 function json2csv(json) {
-    var header = Object.keys(json[1]).join(',') + "\n";
+    let header = Object.keys(json[1]).join(',') + "\n";
 
-    var body = json.map(function(d){
+    let body = json.map(function(d){
         return Object.keys(d).map(function(key) {
             return d[key];
         }).join(',');
@@ -173,7 +183,7 @@ function json2csv(json) {
 
 // csv to json変換.
 function csv2json(csvArray){
-    var jsonArray = [];
+    let jsonArray = [];
 
     let RowArray = csvArray.split('\n');
     let items = RowArray[0].split(',');
@@ -190,22 +200,42 @@ function csv2json(csvArray){
 
 // conf to json.
 function confTojson(jsonArray){
-    var jpNum = jsonArray.lastIndexOf( '[日本語]' );
-    var usNum = jsonArray.lastIndexOf( '[英語]' );
-    var result = jsonArray.substr( jpNum+6, usNum-6 );
-    var result2 = jsonArray.substr( usNum+6,  jsonArray.length-usNum-6);
+    let jpNum = jsonArray.lastIndexOf( '[日本語]' );
+    let usNum = jsonArray.lastIndexOf( '[英語]' );
+    let result = jsonArray.substr( jpNum+6, usNum-6 );
+    let result2 = jsonArray.substr( usNum+6,  jsonArray.length-usNum-6);
     console.log(result2);
-    var mojiJp = "";
-    var mojiUs = "";
+    let mojiJp = "";
+    let mojiUs = "";
 
-    var lineJP = result.split('\n');
-    var lineUS = result2.split('\n');
+    let lineJP = result.split('\n');
+    let lineUS = result2.split('\n');
     let jsonData = [];
 
     for(let i=1;i<lineJP.length-2;i++){
         mojiJp = lineJP[i].split('=');
         mojiUs = lineUS[i-1].split('=');
         let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
+        jsonData.push(buf);
+    }
+    console.log(jsonData);
+    return jsonData;
+}
+
+
+function xmlTojson(jsonArray){
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(jsonArray, "application/xml");
+    let nl = doc.getElementsByTagName("item");
+    let matches = nl.length;
+
+    let jsonData = [];
+    for (let i = 0; i < matches; i++ ) {
+        let e = nl.item(i);
+        let type = e.getElementsByTagName("type");
+        let japan = e.getElementsByTagName("japan");
+        let us = e.getElementsByTagName("us");
+        let buf = {type:type.item(0).textContent, japan:japan.item(0).textContent, us:us.item(0).textContent};
         jsonData.push(buf);
     }
     console.log(jsonData);
@@ -241,6 +271,26 @@ function WriteConfigFile(){
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = '作ったファイル.conf';
+    link.click();
+}
+
+function WriteXmlFile(){
+    let writeString = "";
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    writeString += '<?xml version="1.0" encoding="UTF-8"?>';
+    writeString += '<test> \n';
+    for(let i = 0; i < huga.length; i++){
+        writeString += '<item> \n';
+        writeString += '<type>' + huga[i].type + '</type> \n';
+        writeString += '<japan>' + huga[i].japan + '</japan> \n';
+        writeString += '<us>' + huga[i].us + '</us> \n';
+        writeString += '</item> \n';
+    }
+    writeString += '</test> \n';
+    let blob = new Blob([bom, writeString],{type:"application/xml"});
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = '作ったファイル.xml';
     link.click();
 }
 
