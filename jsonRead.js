@@ -90,24 +90,40 @@ function DoFileToListAdd(input, flg){
                 return;
             }
 
+            console.log(Object.keys(huga[0])[0]);
             var table = document.getElementById('table1'); 
-            while (table.rows.length > 1){
-                table.deleteRow(1);
+            table.deleteTHead();
+            while (table.rows.length > 0){
+                table.deleteRow(0);
             }
+
+            AddTableTitle();
+
             for(let j = 0;j < huga.length;j++){
                 var row = table.insertRow(-1);
                 var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                var cell4 = row.insertCell(3);
-
+                for(let k=0;k<Object.keys(huga[j]).length;k++){
+                    var cell2 = row.insertCell(k+1);
+                    cell2.innerHTML = "<input type='text' id='" + Object.keys(huga[j])[k] + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + Object.values(huga[j])[k] + "'>"
+                }
                 let checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
                 cell1.innerHTML = checkBox;
-                cell2.innerHTML = "<input type='text' id='type" + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + huga[j].type + "'>"
-                cell3.innerHTML = "<input type='text' id='japan" + j + "' onChange='ChangeText(" + (j*10+2) + ")' value='" + huga[j].japan + "'>"
-                cell4.innerHTML = "<input type='text' id='us" + j + "' onChange='ChangeText(" + (j*10+3) + ")' value='" + huga[j].us + "'>"
             }
         }
+    }
+}
+
+function AddTableTitle(){
+    var table = document.getElementById('table1');
+    var row = table.createTHead();
+    var thObj = document.createElement("th");
+    thObj.innerHTML = "削除選択";
+    row.appendChild(thObj);
+    
+    for(let k=0;k<Object.keys(huga[0]).length;k++){
+        var thObj2 = document.createElement("th");
+        thObj2.innerHTML = "要素"+k+1;
+        row.appendChild(thObj2);
     }
 }
 
@@ -157,6 +173,7 @@ function ClickFunc(){
     cell3.innerHTML = "<input type='text' value='" + japan + "'>"
     cell4.innerHTML = "<input type='text' value='" + us + "'>"
 }
+
 
 // jsonファイルとして出力
 function WriteToFile(){
@@ -258,12 +275,12 @@ function WriteToCSV(){
 function WriteConfigFile(){
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    writeString += "[日本語] \n";
+    writeString += "[japan] \n";
     for(let i = 0; i < huga.length; i++){
         writeString += huga[i].type+"="+ huga[i].japan+"\n";
     }
     writeString += "\n";
-    writeString += "[英語] \n";
+    writeString += "[us] \n";
     for(let i = 0; i < huga.length; i++){
         writeString += huga[i].type+"="+ huga[i].us+"\n";
     }    
@@ -277,14 +294,14 @@ function WriteConfigFile(){
 function WriteXmlFile(){
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    writeString += '<?xml version="1.0" encoding="UTF-8"?>';
+    writeString += '<?xml version="1.0" encoding="UTF-8"?> \n';
     writeString += '<test> \n';
     for(let i = 0; i < huga.length; i++){
-        writeString += '<item> \n';
-        writeString += '<type>' + huga[i].type + '</type> \n';
-        writeString += '<japan>' + huga[i].japan + '</japan> \n';
-        writeString += '<us>' + huga[i].us + '</us> \n';
-        writeString += '</item> \n';
+        writeString += '    <item> \n';
+        writeString += '        <type>' + huga[i].type + '</type> \n';
+        writeString += '        <japan>' + huga[i].japan + '</japan> \n';
+        writeString += '        <us>' + huga[i].us + '</us> \n';
+        writeString += '    </item> \n';
     }
     writeString += '</test> \n';
     let blob = new Blob([bom, writeString],{type:"application/xml"});
@@ -311,11 +328,11 @@ function DoFirstScript(){
     }, false);
     btn_delete.addEventListener('click', function() {
         let r = $('input[name="selectBtn"]:checked').val();
-        var table = document.getElementById('table1'); 1
-        let rStr = Number(r.substr("select".length - r.length))+1;
+        var table = document.getElementById('table1'); 
+        let rStr = Number(r.substr("select".length - r.length));
         console.log("rows:"+table.rows.length+" r:"+r+" rStr:"+rStr);
 
-        huga.splice(rStr-1,1);
+        huga.splice(rStr,1);
         table.deleteRow(rStr);
         dialog.close();
       }, false);
