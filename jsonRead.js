@@ -174,6 +174,7 @@ function ClickFunc(){
     cell4.innerHTML = "<input type='text' value='" + us + "'>"
 }
 
+
 // jsonファイルとして出力
 function WriteToFile(){
     let hugastring = JSON.stringify(huga);
