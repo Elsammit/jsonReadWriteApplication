@@ -11,7 +11,7 @@ function fileChanged(input){
 
     // 次の追加ファイル選択widget表示.
     let MessageTag = document.createElement("p");   
-    var newContent = document.createTextNode("②連結したいファイルを選択ください");
+    let newContent = document.createTextNode("②連結したいファイルを選択ください");
     MessageTag.appendChild(newContent);
     let ParentInput = document.getElementById("inputFileList");
     ParentInput.appendChild(MessageTag);
@@ -47,7 +47,7 @@ function DoFileToListAdd(input, flg){
                 if(flg == 0){
                     huga = JSON.parse(reader.result);
                 }else{
-                    var test = JSON.parse(reader.result);
+                    let test = JSON.parse(reader.result);
                     for(let j=0;j<test.length;j++){
                         huga.push(test[j]);
                     }
@@ -58,7 +58,7 @@ function DoFileToListAdd(input, flg){
                 if(flg == 0){
                     huga = csv2json(reader.result);
                 }else{
-                    var test = csv2json(reader.result);
+                    let test = csv2json(reader.result);
                     for(let j=0;j<test.length;j++){
                         huga.push(test[j]);
                     }
@@ -69,7 +69,7 @@ function DoFileToListAdd(input, flg){
                 if(flg==0){
                     huga = confTojson(reader.result);
                 }else{
-                    var test = confTojson(reader.result);
+                    let test = confTojson(reader.result);
                     for(let j=0;j<test.length;j++){
                         huga.push(test[j]);
                     }
@@ -79,7 +79,7 @@ function DoFileToListAdd(input, flg){
                 if(flg==0){
                     huga = xmlTojson(reader.result);
                 }else{
-                    var test = xmlTojson(reader.result);
+                    let test = xmlTojson(reader.result);
                     for(let j=0;j<test.length;j++){
                         huga.push(test[j]);
                     }
@@ -91,7 +91,7 @@ function DoFileToListAdd(input, flg){
             }
 
             console.log(Object.keys(huga[0])[0]);
-            var table = document.getElementById('table1'); 
+            let table = document.getElementById('table1'); 
             table.deleteTHead();
             while (table.rows.length > 0){
                 table.deleteRow(0);
@@ -100,10 +100,10 @@ function DoFileToListAdd(input, flg){
             AddTableTitle();
 
             for(let j = 0;j < huga.length;j++){
-                var row = table.insertRow(-1);
-                var cell1 = row.insertCell(0);
+                let row = table.insertRow(-1);
+                let cell1 = row.insertCell(0);
                 for(let k=0;k<Object.keys(huga[j]).length;k++){
-                    var cell2 = row.insertCell(k+1);
+                    let cell2 = row.insertCell(k+1);
                     cell2.innerHTML = "<input type='text' id='" + Object.keys(huga[j])[k] + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + Object.values(huga[j])[k] + "'>"
                 }
                 let checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
@@ -114,14 +114,14 @@ function DoFileToListAdd(input, flg){
 }
 
 function AddTableTitle(){
-    var table = document.getElementById('table1');
-    var row = table.createTHead();
-    var thObj = document.createElement("th");
+    let table = document.getElementById('table1');
+    let row = table.createTHead();
+    let thObj = document.createElement("th");
     thObj.innerHTML = "削除選択";
     row.appendChild(thObj);
     
     for(let k=0;k<Object.keys(huga[0]).length;k++){
-        var thObj2 = document.createElement("th");
+        let thObj2 = document.createElement("th");
         thObj2.innerHTML = "要素"+k+1;
         row.appendChild(thObj2);
     }
@@ -160,12 +160,12 @@ function ClickFunc(){
     let data = {type:type, japan:japan, us:us}
     huga.push(data);
     
-    var table = document.getElementById('table1'); 
-    var row = table.insertRow(-1); 
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
+    let table = document.getElementById('table1'); 
+    let row = table.insertRow(-1); 
+    let cell1 = row.insertCell(0);
+    let cell2 = row.insertCell(1);
+    let cell3 = row.insertCell(2);
+    let cell4 = row.insertCell(3);
 
     let checkBox = '<input type="radio" name="selectBtn" value="select'+huga.length+' onChange="SelectCheck()">'
     cell1.innerHTML = checkBox;
@@ -206,7 +206,7 @@ function csv2json(csvArray){
     let items = RowArray[0].split(',');
     for(let i = 1; i < RowArray.length; i++){
         let cellArray = RowArray[i].split(',');
-        var a_line = new Object();
+        let a_line = new Object();
         for(let j = 0; j < items.length; j++){
             a_line[items[j]] = cellArray[j];
         }
@@ -313,10 +313,10 @@ function WriteXmlFile(){
 
 // データ削除のためのポップアップ作成用
 function DoFirstScript(){
-    var dialog = document.querySelector('dialog');
-    var btn_show = document.getElementById('showp');
-    var btn_close = document.getElementById('closep');
-    var btn_delete = document.getElementById('DeleteOK');
+    let dialog = document.querySelector('dialog');
+    let btn_show = document.getElementById('showp');
+    let btn_close = document.getElementById('closep');
+    let btn_delete = document.getElementById('DeleteOK');
 
     btn_show.addEventListener('click', function() {
         let r = $('input[name="selectBtn"]:checked').val();
@@ -328,7 +328,7 @@ function DoFirstScript(){
     }, false);
     btn_delete.addEventListener('click', function() {
         let r = $('input[name="selectBtn"]:checked').val();
-        var table = document.getElementById('table1'); 
+        let table = document.getElementById('table1'); 
         let rStr = Number(r.substr("select".length - r.length));
         console.log("rows:"+table.rows.length+" r:"+r+" rStr:"+rStr);
 
