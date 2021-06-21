@@ -187,7 +187,7 @@ function WriteToFile(){
 
 // json to csv変換.
 function json2csv(json) {
-    let header = Object.keys(json[1]).join(',') + "\n";
+    let header = Object.keys(json[0]).join(',') + "\n";
 
     let body = json.map(function(d){
         return Object.keys(d).map(function(key) {
@@ -217,10 +217,12 @@ function csv2json(csvArray){
 
 // conf to json.
 function confTojson(jsonArray){
-    let jpNum = jsonArray.lastIndexOf( '[日本語]' );
-    let usNum = jsonArray.lastIndexOf( '[英語]' );
-    let result = jsonArray.substr( jpNum+6, usNum-6 );
-    let result2 = jsonArray.substr( usNum+6,  jsonArray.length-usNum-6);
+    let first = jsonArray.lastIndexOf( '[' );
+    let second = jsonArray.lastIndexOf( ']' );
+    console.log(jsonArray.substr( 0, first ));
+
+    let result = jsonArray.substr( 0, first );
+    let result2 = jsonArray.substr( first,  second);
     console.log(result2);
     let mojiJp = "";
     let mojiUs = "";
@@ -295,7 +297,7 @@ function WriteXmlFile(){
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     writeString += '<?xml version="1.0" encoding="UTF-8"?> \n';
-    writeString += '<test> \n';
+    writeString += '<lists> \n';
     for(let i = 0; i < huga.length; i++){
         writeString += '    <item> \n';
         writeString += '        <type>' + huga[i].type + '</type> \n';
@@ -303,7 +305,7 @@ function WriteXmlFile(){
         writeString += '        <us>' + huga[i].us + '</us> \n';
         writeString += '    </item> \n';
     }
-    writeString += '</test> \n';
+    writeString += '</lists> \n';
     let blob = new Blob([bom, writeString],{type:"application/xml"});
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
