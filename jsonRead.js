@@ -219,11 +219,9 @@ function csv2json(csvArray){
 function confTojson(jsonArray){
     let first = jsonArray.lastIndexOf( '[' );
     let second = jsonArray.lastIndexOf( ']' );
-    console.log(jsonArray.substr( 0, first ));
 
     let result = jsonArray.substr( 0, first );
     let result2 = jsonArray.substr( first,  second);
-    console.log(result2);
     let mojiJp = "";
     let mojiUs = "";
 
@@ -251,10 +249,20 @@ function xmlTojson(jsonArray){
     let jsonData = [];
     for (let i = 0; i < matches; i++ ) {
         let e = nl.item(i);
+        console.log(e.childNodes[3].nodeName);
+        console.log(Math.floor(e.childNodes.length/2));
+        let youso = [];
+        for(let j = 0;j < Math.floor(e.childNodes.length/2);j++){
+            let type = e.getElementsByTagName(e.childNodes[1+j*2].nodeName);
+            youso.push(type);
+        }
+        let buf = {type:youso[0].item(0).textContent, japan:youso[1].item(0).textContent, us:youso[2].item(0).textContent};
+        /*
         let type = e.getElementsByTagName("type");
         let japan = e.getElementsByTagName("japan");
         let us = e.getElementsByTagName("us");
         let buf = {type:type.item(0).textContent, japan:japan.item(0).textContent, us:us.item(0).textContent};
+        */
         jsonData.push(buf);
     }
     console.log(jsonData);
