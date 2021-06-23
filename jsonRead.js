@@ -40,7 +40,6 @@ function DoFileToListAdd(input, flg){
     for(let i = 0; i < input.files.length; i++){
         reader.readAsText(input.files[i], 'UTF-8');
         reader.onload = () =>{
-            console.log(reader.result);
             
             if( /\.(json)$/i.test(input.files[i].name) ){
                 console.log("jsonFile!!");
@@ -90,7 +89,6 @@ function DoFileToListAdd(input, flg){
                 return;
             }
 
-            console.log(Object.keys(huga[0])[0]);
             let table = document.getElementById('table1'); 
             table.deleteTHead();
             while (table.rows.length > 0){
@@ -132,7 +130,6 @@ function ChangeText(input){
     let cell = input % 10;
     let Rows = Math.floor(input / 10);
     let idbuf;
-    console.log("cell:"+cell +" Rows:"+Rows);
     switch(cell){
         case 1:
             idbuf = "type" + Rows;
@@ -149,7 +146,6 @@ function ChangeText(input){
         default:
             break;
     }
-    console.log(huga);
 }
 
 //　テーブルへのデータ追加
@@ -235,37 +231,27 @@ function confTojson(jsonArray){
         let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
         jsonData.push(buf);
     }
-    console.log(jsonData);
     return jsonData;
 }
 
-
-function xmlTojson(jsonArray){
+// xml to json
+function xmlTojson(xmlArray){
     let parser = new DOMParser();
-    let doc = parser.parseFromString(jsonArray, "application/xml");
+    let doc = parser.parseFromString(xmlArray, "application/xml");
     let nl = doc.getElementsByTagName("item");
     let matches = nl.length;
 
     let jsonData = [];
     for (let i = 0; i < matches; i++ ) {
         let e = nl.item(i);
-        console.log(e.childNodes[3].nodeName);
-        console.log(Math.floor(e.childNodes.length/2));
         let youso = [];
         for(let j = 0;j < Math.floor(e.childNodes.length/2);j++){
             let type = e.getElementsByTagName(e.childNodes[1+j*2].nodeName);
             youso.push(type);
         }
         let buf = {type:youso[0].item(0).textContent, japan:youso[1].item(0).textContent, us:youso[2].item(0).textContent};
-        /*
-        let type = e.getElementsByTagName("type");
-        let japan = e.getElementsByTagName("japan");
-        let us = e.getElementsByTagName("us");
-        let buf = {type:type.item(0).textContent, japan:japan.item(0).textContent, us:us.item(0).textContent};
-        */
         jsonData.push(buf);
     }
-    console.log(jsonData);
     return jsonData;
 }
 
@@ -273,7 +259,6 @@ function xmlTojson(jsonArray){
 function WriteToCSV(){
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     let hugastring = json2csv(huga);
-    console.log(hugastring);
     let blob = new Blob([bom, hugastring],{type:"text/plan"});
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -301,6 +286,7 @@ function WriteConfigFile(){
     link.click();
 }
 
+// jsonデータをxmlファイルとして出力する
 function WriteXmlFile(){
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
@@ -330,7 +316,6 @@ function DoFirstScript(){
 
     btn_show.addEventListener('click', function() {
         let r = $('input[name="selectBtn"]:checked').val();
-        console.log(r);
       dialog.show();
     }, false);
     btn_close.addEventListener('click', function() {
@@ -340,7 +325,6 @@ function DoFirstScript(){
         let r = $('input[name="selectBtn"]:checked').val();
         let table = document.getElementById('table1'); 
         let rStr = Number(r.substr("select".length - r.length));
-        console.log("rows:"+table.rows.length+" r:"+r+" rStr:"+rStr);
 
         huga.splice(rStr,1);
         table.deleteRow(rStr);
