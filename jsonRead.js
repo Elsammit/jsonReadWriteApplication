@@ -111,6 +111,7 @@ function DoFileToListAdd(input, flg){
     }
 }
 
+// テーブルタイトルの追加
 function AddTableTitle(){
     let table = document.getElementById('table1');
     let row = table.createTHead();
