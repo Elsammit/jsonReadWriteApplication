@@ -18,6 +18,7 @@
 
 #table1{
     margin-left:30px;
+    visibility: hidden;
 }
 
 #Message{

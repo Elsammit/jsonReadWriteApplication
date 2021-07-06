@@ -89,7 +89,8 @@ function DoFileToListAdd(input, flg){
                 return;
             }
 
-            let table = document.getElementById('table1'); 
+            let table = document.getElementById('table1');
+            table.style.visibility = "visible"; 
             table.deleteTHead();
             while (table.rows.length > 0){
                 table.deleteRow(0);
@@ -114,6 +115,7 @@ function DoFileToListAdd(input, flg){
 // テーブルタイトルの追加
 function AddTableTitle(){
     let table = document.getElementById('table1');
+    table.style.visibility = "visible";
     let row = table.createTHead();
     let thObj = document.createElement("th");
     thObj.innerHTML = "削除選択";
@@ -149,26 +151,60 @@ function ChangeText(input){
     }
 }
 
+function CheckAlreadyResister(input){
+    for(let j = 0;j < huga.length;j++){
+        if(input["type"] == huga[j]["type"] || 
+            input["japan"] ==  huga[j]["japan"] || 
+            input["us"] == huga[j]["us"]){
+                return j;
+        }
+    }
+    return -1;
+}
+
 //　テーブルへのデータ追加
 function ClickFunc(){
     let type = document.getElementById('type').value;
     let japan = document.getElementById('japan').value; 
     let us = document.getElementById('us').value; 
+    if(type == "" ||
+        japan == "" ||
+        us == ""){
+            alert("未入力エラー");
+            document.getElementById('type').value = "";
+            document.getElementById('japan').value = ""; 
+            document.getElementById('us').value = ""; 
+            return;
+    }
     let data = {type:type, japan:japan, us:us}
-    huga.push(data);
     
-    let table = document.getElementById('table1'); 
-    let row = table.insertRow(-1); 
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-    let cell3 = row.insertCell(2);
-    let cell4 = row.insertCell(3);
+    let ret = CheckAlreadyResister(data);
+    if(ret != -1){
+        alert(ret+"番目ですでに登録済み");
+    }else{
+        huga.push(data);
+    
+        let table = document.getElementById('table1'); 
+        table.style.visibility = "visible";
+        let row = table.insertRow(-1); 
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        let cell3 = row.insertCell(2);
+        let cell4 = row.insertCell(3);
+    
+        let checkBox = '<input type="radio" name="selectBtn" value="select'+huga.length+' onChange="SelectCheck()">'
+        cell1.innerHTML = checkBox;
+        cell2.innerHTML = "<input type='text' value='" + type + "'>"
+        cell3.innerHTML = "<input type='text' value='" + japan + "'>"
+        cell4.innerHTML = "<input type='text' value='" + us + "'>"
 
-    let checkBox = '<input type="radio" name="selectBtn" value="select'+huga.length+' onChange="SelectCheck()">'
-    cell1.innerHTML = checkBox;
-    cell2.innerHTML = "<input type='text' value='" + type + "'>"
-    cell3.innerHTML = "<input type='text' value='" + japan + "'>"
-    cell4.innerHTML = "<input type='text' value='" + us + "'>"
+        alert("追加登録完了！！");
+    }
+
+    document.getElementById('type').value = "";
+    document.getElementById('japan').value = ""; 
+    document.getElementById('us').value = ""; 
+    
 }
 
 
