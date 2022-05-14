@@ -2,11 +2,13 @@
 	{
     	"type":"AAA",
         "name":"aaa",
-        "age":"20"
+        "age":"20",
+        "hoge":"huga"
     },
     {
     	"type":"BBB",
         "name":"bbb",
-        "age":"30"
+        "age":"30",
+        "hoge":"huga"
     }
 ]

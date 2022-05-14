@@ -37,94 +37,111 @@ function AddFileSelectChild(){
 
 // ファイルからデータを読み出してデータをリストへ書き込み.
 function DoFileToListAdd(input, flg){
-    for(let i = 0; i < input.files.length; i++){
-        reader.readAsText(input.files[i], 'UTF-8');
-        reader.onload = () =>{
-            
-            if( /\.(json)$/i.test(input.files[i].name) ){
-                console.log("jsonFile!!");
-                if(flg == 0){
-                    huga = JSON.parse(reader.result);
-                }else{
-                    let test = JSON.parse(reader.result);
-                    for(let j=0;j<test.length;j++){
-                        huga.push(test[j]);
-                    }
+    new Promise((resolve, reject) => {
+        console.log("Promise1");
+        let i = 0;
+        // for(let i = 0; i < input.files.length; i++){
+        for(const inputData of input.files){
+            i++;
+            console.log("Promise3");
+            reader.readAsText(inputData, 'UTF-8');
+            reader.onload = () =>{
+                ReadFileToMem(input, i, flg);
+    
+                const table = document.getElementById('table1');
+                table.style.visibility = "visible"; 
+                table.deleteTHead();
+                while (table.rows.length > 0){
+                    table.deleteRow(0);
                 }
-                
-            }else if( /\.(csv)$/i.test(input.files[i].name)){
-                console.log("csvFile!!");
-                if(flg == 0){
-                    huga = csv2json(reader.result);
-                }else{
-                    let test = csv2json(reader.result);
-                    for(let j=0;j<test.length;j++){
-                        huga.push(test[j]);
-                    }
-                }
-                
-            }else if(/\.(conf)$/i.test(input.files[i].name)){
-                console.log("confFile!!");
-                if(flg==0){
-                    huga = confTojson(reader.result);
-                }else{
-                    let test = confTojson(reader.result);
-                    for(let j=0;j<test.length;j++){
-                        huga.push(test[j]);
-                    }
-                }
-            }else if(/\.(xml)$/i.test(input.files[i].name)){
-                console.log("XmlFile!!");
-                if(flg==0){
-                    huga = xmlTojson(reader.result);
-                }else{
-                    let test = xmlTojson(reader.result);
-                    for(let j=0;j<test.length;j++){
-                        huga.push(test[j]);
-                    }
-                }
-            }else{
-                console.log("??? file!! " + input.files[i].name);
-                alert("csvファイルかjsonファイルを選択ください");
-                return;
-            }
-
-            let table = document.getElementById('table1');
-            table.style.visibility = "visible"; 
-            table.deleteTHead();
-            while (table.rows.length > 0){
-                table.deleteRow(0);
-            }
-
-            AddTableTitle();
-
-            for(let j = 0;j < huga.length;j++){
-                let row = table.insertRow(-1);
-                let cell1 = row.insertCell(0);
-                for(let k=0;k<Object.keys(huga[j]).length;k++){
-                    let cell2 = row.insertCell(k+1);
-                    cell2.innerHTML = "<input type='text' id='" + Object.keys(huga[j])[k] + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + Object.values(huga[j])[k] + "'>"
-                }
-                let checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
-                cell1.innerHTML = checkBox;
             }
         }
+        console.log("Promise2");
+        resolve();
+    }).then(() => {
+        console.log("Then");
+        console.log(huga);
+        AddTableTitle();
+        AddTableBody();
+    });
+}
+
+ReadFileToMem = (input, i, flg) =>{
+    if( /\.(json)$/i.test(input.files[i].name) ){
+        console.log("jsonFile!!");
+        if(flg == 0){
+            huga = JSON.parse(reader.result);
+        }else{
+            const jsonDatas = JSON.parse(reader.result);
+            for(const jdata of jsonDatas){
+                huga.push(jdata);
+            }
+        }
+    }else if( /\.(csv)$/i.test(input.files[i].name)){
+        console.log("csvFile!!");
+        if(flg == 0){
+            huga = csv2json(reader.result);
+        }else{
+            const csvDatas = csv2json(reader.result);
+            for(const cdata of csvDatas){
+                huga.push(cdata);
+            }
+        }
+    }else if(/\.(conf)$/i.test(input.files[i].name)){
+        console.log("confFile!!");
+        if(flg==0){
+            huga = confTojson(reader.result);
+        }else{
+            const confDatas = confTojson(reader.result);
+            for(const confdata of confDatas){
+                huga.push(confdata);
+            }
+        }
+    }else if(/\.(xml)$/i.test(input.files[i].name)){
+        console.log("XmlFile!!");
+        if(flg==0){
+            huga = xmlTojson(reader.result);
+        }else{
+            const xmlDatas = xmlTojson(reader.result);
+            for(const xdata of xmlDatas){
+                huga.push(xdata);
+            }
+        }
+    }else{
+        console.log("??? file!! " + input.files[i].name);
+        alert("csvファイルかjsonファイルを選択ください");
+        return;
     }
 }
 
 // テーブルタイトルの追加
 function AddTableTitle(){
-    let table = document.getElementById('table1');
+    const table = document.getElementById('table1');
     table.style.visibility = "visible";
-    let row = table.createTHead();
-    let thObj = document.createElement("th");
+    const row = table.createTHead();
+    const thObj = document.createElement("th");
     thObj.innerHTML = "削除選択";
     row.appendChild(thObj);
     
-    for(let k=0;k<Object.keys(huga[0]).length;k++){
-        let thObj2 = document.createElement("th");
-        thObj2.innerHTML = "要素"+k+1;
+    for(const header of Object.keys(huga[0])){
+        const thObj2 = document.createElement("th");
+        thObj2.innerHTML = header;
         row.appendChild(thObj2);
+    }
+}
+
+AddTableBody = () =>{
+    const table = document.getElementById('table1');
+    for(let j = 0;j < huga.length;j++){
+        const row = table.insertRow(-1);
+        const cell1 = row.insertCell(0);
+        for(let k=0;k<Object.keys(huga[j]).length;k++){
+            const cell2 = row.insertCell(k+1);
+            cell2.innerHTML = `<input type='text' id=${Object.keys(huga[j])[k] + j} onChange=ChangeText(${j*10+1}) value=${Object.values(huga[j])[k]}>`
+            // cell2.innerHTML = "<input type='text' id='" + Object.keys(huga[j])[k] + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + Object.values(huga[j])[k] + "'>"
+        }
+        // const checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
+        cell1.innerHTML = `<input type="radio" name="selectBtn" value='select${j}'>`;
     }
 }
 
