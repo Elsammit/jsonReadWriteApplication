@@ -3,11 +3,19 @@ let reader = new FileReader();
 let huga = [];      // 管理するデータリスト
 let fileCount = 1;  // ファイル選択widget数.
 
+const FileInfo = {
+    InputFile:'',
+    ChgFlg:0,
+}
+
 // 第1ファイル選択画面にてファイルを選択した際の割り込み.
 function fileChanged(input){
+    FileInfo.InputFile = input;
+    FileInfo.ChgFlg = 0;
+
     document.getElementById("InputList").style.opacity = 1.0;
     huga = [];                  // 初期化.  
-    DoFileToListAdd(input,0);   // リストへの追加処理.
+    DoFileToListAdd();   // リストへの追加処理.
 
     // 次の追加ファイル選択widget表示.
     let MessageTag = document.createElement("p");   
@@ -20,7 +28,9 @@ function fileChanged(input){
 }
 
 function fileAdd(input){
-    DoFileToListAdd(input,1);
+    FileInfo.InputFile = input;
+    FileInfo.ChgFlg = 1;
+    DoFileToListAdd();
     AddFileSelectChild();
 }
 
@@ -36,139 +46,96 @@ function AddFileSelectChild(){
 }
 
 // ファイルからデータを読み出してデータをリストへ書き込み.
-function DoFileToListAdd(input, flg){
-    // let myPromise = Promise
-    let i = 0;
+function DoFileToListAdd(){
+    console.log("Promise3");
+    new Promise((resolve, reject) =>{
+        reader.readAsText(FileInfo.InputFile.files[0], 'UTF-8');
+        console.log(FileInfo.InputFile.files[0]);
     
-    console.log("Promise1");
-    
-    //  for(let i = 0; i < input.files.length; i++){
-    for(const inputData of input.files){
-        new Promise((resolve, reject) => {
-            
-            console.log("Promise3");
-            reader.readAsText(inputData, 'UTF-8');
-            console.log(inputData);
-            reader.onload = () =>{
-                // ReadFileToMem(input, i, flg);
-    
-                if( /\.(json)$/i.test(input.files[i].name) ){
-                    console.log("jsonFile!!");
-                    if(flg == 0){
-                        huga = JSON.parse(reader.result);
-                    }else{
-                        const jsonDatas = JSON.parse(reader.result);
-                        for(const jdata of jsonDatas){
-                            huga.push(jdata);
-                        }
-                    }
-                }else if( /\.(csv)$/i.test(input.files[i].name)){
-                    console.log("csvFile!!");
-                    if(flg == 0){
-                        huga = csv2json(reader.result);
-                    }else{
-                        const csvDatas = csv2json(reader.result);
-                        for(const cdata of csvDatas){
-                            huga.push(cdata);
-                        }
-                    }
-                }else if(/\.(conf)$/i.test(input.files[i].name)){
-                    console.log("confFile!!");
-                    if(flg==0){
-                        huga = confTojson(reader.result);
-                    }else{
-                        const confDatas = confTojson(reader.result);
-                        for(const confdata of confDatas){
-                            huga.push(confdata);
-                        }
-                    }
-                }else if(/\.(xml)$/i.test(input.files[i].name)){
-                    console.log("XmlFile!!");
-                    if(flg==0){
-                        huga = xmlTojson(reader.result);
-                    }else{
-                        const xmlDatas = xmlTojson(reader.result);
-                        for(const xdata of xmlDatas){
-                            huga.push(xdata);
-                        }
-                    }
-                }else{
-                    console.log("??? file!! " + input.files[i].name);
-                    alert("csvファイルかjsonファイルを選択ください");
-                    return;
-                }
-
-                const table = document.getElementById('table1');
-                table.style.visibility = "visible"; 
-                table.deleteTHead();
-                while (table.rows.length > 0){
-                    table.deleteRow(0);
-                }
-                i++;
+        reader.onload = () =>{
+            ReadFileToMem();
+            const table = document.getElementById('table1');
+            table.style.visibility = "visible"; 
+            table.deleteTHead();
+            while (table.rows.length > 0){
+                table.deleteRow(0);
             }
-            console.log("Promise2");
             resolve();
-        });
-    }   
-    console.log("Then");
-    console.log(huga);
-    AddTableTitle();
-    AddTableBody();
+        }
+    }).then( () =>{
+        AddTableTitle();
+        AddTableBody();
+    });                                                                                 
 }
 
-ReadFileToMem = (input, i, flg) =>{
-    new Promise(()=>{
-        if( /\.(json)$/i.test(input.files[i].name) ){
-            console.log("jsonFile!!");
-            if(flg == 0){
-                huga = JSON.parse(reader.result);
-            }else{
-                const jsonDatas = JSON.parse(reader.result);
-                for(const jdata of jsonDatas){
-                    huga.push(jdata);
-                }
-            }
-        }else if( /\.(csv)$/i.test(input.files[i].name)){
-            console.log("csvFile!!");
-            if(flg == 0){
-                huga = csv2json(reader.result);
-            }else{
-                const csvDatas = csv2json(reader.result);
-                for(const cdata of csvDatas){
-                    huga.push(cdata);
-                }
-            }
-        }else if(/\.(conf)$/i.test(input.files[i].name)){
-            console.log("confFile!!");
-            if(flg==0){
-                huga = confTojson(reader.result);
-            }else{
-                const confDatas = confTojson(reader.result);
-                for(const confdata of confDatas){
-                    huga.push(confdata);
-                }
-            }
-        }else if(/\.(xml)$/i.test(input.files[i].name)){
-            console.log("XmlFile!!");
-            if(flg==0){
-                huga = xmlTojson(reader.result);
-            }else{
-                const xmlDatas = xmlTojson(reader.result);
-                for(const xdata of xmlDatas){
-                    huga.push(xdata);
-                }
-            }
-        }else{
-            console.log("??? file!! " + input.files[i].name);
-            alert("csvファイルかjsonファイルを選択ください");
-            return;
+ReadFileToMem = () =>{
+    if( /\.(json)$/i.test(FileInfo.InputFile.files[0].name) ){
+        console.log("jsonFile!!");
+        ReadJsonFile();
+    }else if( /\.(csv)$/i.test(FileInfo.InputFile.files[0].name)){
+        console.log("csvFile!!");
+        ReadCsvFile();
+    }else if(/\.(conf)$/i.test(FileInfo.InputFile.files[0].name)){
+        console.log("confFile!!");
+        ReadConfFile();
+    }else if(/\.(xml)$/i.test(FileInfo.InputFile.files[0].name)){
+        console.log("XmlFile!!");
+        ReadXmlFile();
+    }else{
+        console.log("??? file!! " + FileInfo.InputFile.files[0].name);
+        alert("csvファイルかjsonファイルを選択ください");
+        return;
+    }
+}
+
+ReadJsonFile = () =>{
+    if(FileInfo.ChgFlg == 0){
+        huga = JSON.parse(reader.result);
+    }else{
+        const jsonDatas = JSON.parse(reader.result);
+        for(const jdata of jsonDatas){
+            huga.push(jdata);
         }
-        resolve();
-    });
+    }
+}
+
+ReadCsvFile = () =>{
+    if(FileInfo.ChgFlg == 0){
+        huga = csv2json(reader.result);
+    }else{
+        const csvDatas = csv2json(reader.result);
+        for(const cdata of csvDatas){
+            huga.push(cdata);
+        }
+    }
+}
+
+ReadConfFile = () =>{
+    if(FileInfo.ChgFlg == 0){
+        huga = confTojson(reader.result);
+    }else{
+        const confDatas = confTojson(reader.result);
+        for(const confdata of confDatas){
+            huga.push(confdata);
+        }
+    }
+}
+
+ReadXmlFile = () =>{
+    if(FileInfo.ChgFlg == 0){
+        huga = xmlTojson(reader.result);
+    }else{
+        const xmlDatas = xmlTojson(reader.result);
+        for(const xdata of xmlDatas){
+            huga.push(xdata);
+        }
+    }
 }
 
 // テーブルタイトルの追加
 function AddTableTitle(){
+    console.log(huga);
+
     const table = document.getElementById('table1');
     table.style.visibility = "visible";
     const row = table.createTHead();
@@ -191,9 +158,7 @@ AddTableBody = () =>{
         for(let k=0;k<Object.keys(huga[j]).length;k++){
             const cell2 = row.insertCell(k+1);
             cell2.innerHTML = `<input type='text' id=${Object.keys(huga[j])[k] + j} onChange=ChangeText(${j*10+1}) value=${Object.values(huga[j])[k]}>`
-            // cell2.innerHTML = "<input type='text' id='" + Object.keys(huga[j])[k] + j + "' onChange='ChangeText(" + (j*10+1) + ")' value='" + Object.values(huga[j])[k] + "'>"
         }
-        // const checkBox = '<input type="radio" name="selectBtn" value="select'+j+'">'
         cell1.innerHTML = `<input type="radio" name="selectBtn" value='select${j}'>`;
     }
 }
