@@ -1,3 +1,5 @@
+import {ReadJsonFile, ReadCsvFile, ReadConfFile, ReadXmlFile} from './FileProcessing.js'
+
 let reader = new FileReader();
 
 let huga = [];      // 管理するデータリスト
@@ -88,49 +90,49 @@ ReadFileToMem = () =>{
     }
 }
 
-ReadJsonFile = () =>{
-    if(FileInfo.ChgFlg == 0){
-        huga = JSON.parse(reader.result);
-    }else{
-        const jsonDatas = JSON.parse(reader.result);
-        for(const jdata of jsonDatas){
-            huga.push(jdata);
-        }
-    }
-}
+// ReadJsonFile = () =>{
+//     if(FileInfo.ChgFlg == 0){
+//         huga = JSON.parse(reader.result);
+//     }else{
+//         const jsonDatas = JSON.parse(reader.result);
+//         for(const jdata of jsonDatas){
+//             huga.push(jdata);
+//         }
+//     }
+// }
 
-ReadCsvFile = () =>{
-    if(FileInfo.ChgFlg == 0){
-        huga = csv2json(reader.result);
-    }else{
-        const csvDatas = csv2json(reader.result);
-        for(const cdata of csvDatas){
-            huga.push(cdata);
-        }
-    }
-}
+// ReadCsvFile = () =>{
+//     if(FileInfo.ChgFlg == 0){
+//         huga = csv2json(reader.result);
+//     }else{
+//         const csvDatas = csv2json(reader.result);
+//         for(const cdata of csvDatas){
+//             huga.push(cdata);
+//         }
+//     }
+// }
 
-ReadConfFile = () =>{
-    if(FileInfo.ChgFlg == 0){
-        huga = confTojson(reader.result);
-    }else{
-        const confDatas = confTojson(reader.result);
-        for(const confdata of confDatas){
-            huga.push(confdata);
-        }
-    }
-}
+// ReadConfFile = () =>{
+//     if(FileInfo.ChgFlg == 0){
+//         huga = confTojson(reader.result);
+//     }else{
+//         const confDatas = confTojson(reader.result);
+//         for(const confdata of confDatas){
+//             huga.push(confdata);
+//         }
+//     }
+// }
 
-ReadXmlFile = () =>{
-    if(FileInfo.ChgFlg == 0){
-        huga = xmlTojson(reader.result);
-    }else{
-        const xmlDatas = xmlTojson(reader.result);
-        for(const xdata of xmlDatas){
-            huga.push(xdata);
-        }
-    }
-}
+// ReadXmlFile = () =>{
+//     if(FileInfo.ChgFlg == 0){
+//         huga = xmlTojson(reader.result);
+//     }else{
+//         const xmlDatas = xmlTojson(reader.result);
+//         for(const xdata of xmlDatas){
+//             huga.push(xdata);
+//         }
+//     }
+// }
 
 // テーブルタイトルの追加
 function AddTableTitle(){
@@ -361,7 +363,8 @@ function WriteConfigFile(){
 // jsonデータをxmlファイルとして出力する
 function WriteXmlFile(){
     let writeString = "";
-    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    let bom = new Uint8Arr
+    ay([0xEF, 0xBB, 0xBF]);
     writeString += '<?xml version="1.0" encoding="UTF-8"?> \n';
     writeString += '<lists> \n';
     for(let i = 0; i < huga.length; i++){
