@@ -1,4 +1,6 @@
-export function ReadJsonFile(){
+'use strict'
+
+export function ReadJsonFile(reader, huga){
     if(FileInfo.ChgFlg == 0){
         huga = JSON.parse(reader.result);
     }else{
@@ -7,9 +9,10 @@ export function ReadJsonFile(){
             huga.push(jdata);
         }
     }
+    return huga;
 }
 
-export function ReadCsvFile(){
+export function ReadCsvFile(reader, huga){
     if(FileInfo.ChgFlg == 0){
         huga = csv2json(reader.result);
     }else{
@@ -18,9 +21,10 @@ export function ReadCsvFile(){
             huga.push(cdata);
         }
     }
+    return huga;
 }
 
-export function ReadConfFile(){
+export function ReadConfFile(reader, huga){
     if(FileInfo.ChgFlg == 0){
         huga = confTojson(reader.result);
     }else{
@@ -29,9 +33,10 @@ export function ReadConfFile(){
             huga.push(confdata);
         }
     }
+    return huga;
 }
 
-export function ReadXmlFile(){
+export function ReadXmlFile(reader, huga){
     if(FileInfo.ChgFlg == 0){
         huga = xmlTojson(reader.result);
     }else{
@@ -40,4 +45,5 @@ export function ReadXmlFile(){
             huga.push(xdata);
         }
     }
+    return huga;
 }

@@ -1,17 +1,17 @@
-import {ReadJsonFile, ReadCsvFile, ReadConfFile, ReadXmlFile} from './FileProcessing.js'
+import {ReadJsonFile, ReadCsvFile, ReadConfFile, ReadXmlFile} from './FileProcessing.js';
 
 let reader = new FileReader();
 
 let huga = [];      // 管理するデータリスト
 let fileCount = 1;  // ファイル選択widget数.
 
-const FileInfo = {
+window.FileInfo = {
     InputFile:'',
     ChgFlg:0,
 }
 
 // 第1ファイル選択画面にてファイルを選択した際の割り込み.
-function fileChanged(input){
+window.fileChanged = (input) => {
     FileInfo.InputFile = input;
     FileInfo.ChgFlg = 0;
 
@@ -70,19 +70,19 @@ function DoFileToListAdd(){
     });                                                                                 
 }
 
-ReadFileToMem = () =>{
+const ReadFileToMem = () =>{
     if( /\.(json)$/i.test(FileInfo.InputFile.files[0].name) ){
         console.log("jsonFile!!");
-        ReadJsonFile();
+        huga = ReadJsonFile(reader, huga);
     }else if( /\.(csv)$/i.test(FileInfo.InputFile.files[0].name)){
         console.log("csvFile!!");
-        ReadCsvFile();
+        huga = ReadCsvFile(reader, huga);
     }else if(/\.(conf)$/i.test(FileInfo.InputFile.files[0].name)){
         console.log("confFile!!");
-        ReadConfFile();
+        huga = ReadConfFile(reader, huga);
     }else if(/\.(xml)$/i.test(FileInfo.InputFile.files[0].name)){
         console.log("XmlFile!!");
-        ReadXmlFile();
+        huga = ReadXmlFile(reader, huga);
     }else{
         console.log("??? file!! " + FileInfo.InputFile.files[0].name);
         alert("csvファイルかjsonファイルを選択ください");
@@ -123,7 +123,7 @@ ReadFileToMem = () =>{
 //     }
 // }
 
-// ReadXmlFile = () =>{
+// const ReadXmlFile = () =>{
 //     if(FileInfo.ChgFlg == 0){
 //         huga = xmlTojson(reader.result);
 //     }else{
@@ -152,7 +152,7 @@ function AddTableTitle(){
     }
 }
 
-AddTableBody = () =>{
+const AddTableBody = () =>{
     const table = document.getElementById('table1');
     for(let j = 0;j < huga.length;j++){
         const row = table.insertRow(-1);
@@ -383,7 +383,7 @@ function WriteXmlFile(){
 }
 
 // データ削除のためのポップアップ作成用
-function DoFirstScript(){
+ window.DoFirstScript = () =>{
     let dialog = document.querySelector('dialog');
     let btn_show = document.getElementById('showp');
     let btn_close = document.getElementById('closep');
