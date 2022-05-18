@@ -15,21 +15,21 @@ window.fileChanged = (input) => {
     FileInfo.InputFile = input;
     FileInfo.ChgFlg = 0;
 
-    document.getElementById("InputList").style.opacity = 1.0;
-    huga = [];                  // 初期化.  
+    if(huga.length > 0){
+        huga = [];                  // 初期化. 
+    }else{
+        // 次の追加ファイル選択widget表示.
+        const MessageTag = document.createElement("p");   
+        const newContent = document.createTextNode("②連結したいファイルを選択ください");
+        MessageTag.appendChild(newContent);
+        const ParentInput = document.getElementById("inputFileList");
+        ParentInput.appendChild(MessageTag);
+    }
     DoFileToListAdd();   // リストへの追加処理.
-
-    // 次の追加ファイル選択widget表示.
-    let MessageTag = document.createElement("p");   
-    let newContent = document.createTextNode("②連結したいファイルを選択ください");
-    MessageTag.appendChild(newContent);
-    let ParentInput = document.getElementById("inputFileList");
-    ParentInput.appendChild(MessageTag);
-
     AddFileSelectChild();
 }
 
-function fileAdd(input){
+window.fileAdd = (input) =>{
     FileInfo.InputFile = input;
     FileInfo.ChgFlg = 1;
     DoFileToListAdd();
@@ -38,12 +38,12 @@ function fileAdd(input){
 
 // ファイル選択用Widget追加表示用.
 function AddFileSelectChild(){
-    let FileInputtag = document.createElement("input");
+    const FileInputtag = document.createElement("input");
     FileInputtag.setAttribute('type','file');
     FileInputtag.setAttribute('id','file'+fileCount);
     fileCount++;
     FileInputtag.setAttribute('onChange','fileAdd(this)');
-    let ParentInput = document.getElementById("inputFileList");
+    const ParentInput = document.getElementById("inputFileList");
     ParentInput.appendChild(FileInputtag);
 }
 
@@ -67,6 +67,7 @@ function DoFileToListAdd(){
     }).then( () =>{
         AddTableTitle();
         AddTableBody();
+        AdditionalScreen();
     });                                                                                 
 }
 
@@ -89,50 +90,6 @@ const ReadFileToMem = () =>{
         return;
     }
 }
-
-// ReadJsonFile = () =>{
-//     if(FileInfo.ChgFlg == 0){
-//         huga = JSON.parse(reader.result);
-//     }else{
-//         const jsonDatas = JSON.parse(reader.result);
-//         for(const jdata of jsonDatas){
-//             huga.push(jdata);
-//         }
-//     }
-// }
-
-// ReadCsvFile = () =>{
-//     if(FileInfo.ChgFlg == 0){
-//         huga = csv2json(reader.result);
-//     }else{
-//         const csvDatas = csv2json(reader.result);
-//         for(const cdata of csvDatas){
-//             huga.push(cdata);
-//         }
-//     }
-// }
-
-// ReadConfFile = () =>{
-//     if(FileInfo.ChgFlg == 0){
-//         huga = confTojson(reader.result);
-//     }else{
-//         const confDatas = confTojson(reader.result);
-//         for(const confdata of confDatas){
-//             huga.push(confdata);
-//         }
-//     }
-// }
-
-// const ReadXmlFile = () =>{
-//     if(FileInfo.ChgFlg == 0){
-//         huga = xmlTojson(reader.result);
-//     }else{
-//         const xmlDatas = xmlTojson(reader.result);
-//         for(const xdata of xmlDatas){
-//             huga.push(xdata);
-//         }
-//     }
-// }
 
 // テーブルタイトルの追加
 function AddTableTitle(){
@@ -163,6 +120,44 @@ const AddTableBody = () =>{
         }
         cell1.innerHTML = `<input type="radio" name="selectBtn" value='select${j}'>`;
     }
+}
+
+const AdditionalScreen = () =>{
+    const div = document.getElementById('InsertInfo');
+    const ul = document.createElement('ul');
+    new Promise((resolve, reject) => {
+        const cell = MaxKeyValue();
+        resolve(cell);
+    }).then((cell)=>{
+        for(let i = 0;i < cell.cnt;i++){
+            const li = document.createElement('li');
+            const label = document.createElement('label');
+            const input = document.createElement('input');
+            label.innerHTML = `${Object.keys(huga[cell.num])[i]} : `
+            input.setAttribute('type', 'text');
+            input.setAttribute('id', `${Object.keys(huga[cell.num])[i]}`);
+            li.appendChild(label);
+            li.appendChild(input);
+            ul.appendChild(li);
+        }
+        div.appendChild(ul);
+        (() =>{
+            const InputList = document.getElementById('InputList');
+            InputList.style.opacity = 1.0;
+        })();
+    });
+}
+
+const MaxKeyValue = () => {
+    let cell = {num:0,cnt:0};
+    for(let j = 0;j < huga.length;j++){
+        const dataCellCnt = Object.keys(huga[j]).length;
+        if(cell.cnt < dataCellCnt){
+            cell.cnt = dataCellCnt;
+            cell.num = j;
+        }
+    }
+    return cell;
 }
 
 // テーブル内文字列変更時の割り込み処理.
@@ -200,140 +195,66 @@ function CheckAlreadyResister(input){
 }
 
 //　テーブルへのデータ追加
-function ClickFunc(){
-    let type = document.getElementById('type').value;
-    let japan = document.getElementById('japan').value; 
-    let us = document.getElementById('us').value; 
-    if(type == "" ||
-        japan == "" ||
-        us == ""){
+window.ClickFunc = () =>{
+    // let cells = {};
+    let chkFlg = false;
+    new Promise((resolve, reject)=>{
+        const cell = MaxKeyValue();
+        resolve(cell);
+    }).then((cell) =>{
+        const cells = cell;
+        const inputVal = [];
+        
+        let data = {};
+        for(let i = 0;i < cell.cnt;i++){
+            inputVal[i] = document.getElementById(Object.keys(huga[cell.num])[i]).value;
+            if(inputVal[i] !== ''){
+                chkFlg = true;
+                data[Object.keys(huga[cell.num])[i]] = inputVal[i];
+
+                document.getElementById(Object.keys(huga[cell.num])[i]).value = "";
+            }
+        }
+        if(chkFlg === false){
             alert("未入力エラー");
-            document.getElementById('type').value = "";
-            document.getElementById('japan').value = ""; 
-            document.getElementById('us').value = ""; 
-            return;
-    }
-    let data = {type:type, japan:japan, us:us}
-    
-    let ret = CheckAlreadyResister(data);
-    if(ret != -1){
-        alert(ret+"番目ですでに登録済み");
-    }else{
-        huga.push(data);
-    
-        let table = document.getElementById('table1'); 
-        table.style.visibility = "visible";
-        let row = table.insertRow(-1); 
-        let cell1 = row.insertCell(0);
-        let cell2 = row.insertCell(1);
-        let cell3 = row.insertCell(2);
-        let cell4 = row.insertCell(3);
-    
-        let checkBox = '<input type="radio" name="selectBtn" value="select'+huga.length+' onChange="SelectCheck()">'
-        cell1.innerHTML = checkBox;
-        cell2.innerHTML = "<input type='text' value='" + type + "'>"
-        cell3.innerHTML = "<input type='text' value='" + japan + "'>"
-        cell4.innerHTML = "<input type='text' value='" + us + "'>"
-
-        alert("追加登録完了！！");
-    }
-
-    document.getElementById('type').value = "";
-    document.getElementById('japan').value = ""; 
-    document.getElementById('us').value = ""; 
-    
+        }else{
+            // let ret = CheckAlreadyResister(data);
+            const ret = -1;
+            if(ret != -1){
+                alert(ret+"番目ですでに登録済み");
+            }else{
+                huga.push(data);
+                let table = document.getElementById('table1'); 
+                table.style.visibility = "visible";
+                let row = table.insertRow(-1); 
+                let cell1 = row.insertCell(0);
+            
+                cell1.innerHTML = `<input type="radio" name="selectBtn" value=${huga.length} onChange="SelectCheck()">` 
+                for(let i = 0;i < cells.cnt;i++){
+                    const cellc = row.insertCell(i+1);
+                    cellc.innerHTML = "<input type='text' value='" + inputVal[i] + "'>";
+                }
+            }
+        }
+    });
 }
 
 
 // jsonファイルとして出力
-function WriteToFile(){
-    let hugastring = JSON.stringify(huga);
-    let blob = new Blob([hugastring],{type:"text/plan"});
+window.WriteToFile = () =>{
+    const hugastring = JSON.stringify(huga);
+    const blob = new Blob([hugastring],{type:"text/plan"});
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = '作ったファイル.json';
     link.click();
 }
 
-// json to csv変換.
-function json2csv(json) {
-    let header = Object.keys(json[0]).join(',') + "\n";
-
-    let body = json.map(function(d){
-        return Object.keys(d).map(function(key) {
-            return d[key];
-        }).join(',');
-    }).join("\n");
-
-    return header + body;
-}
-
-// csv to json変換.
-function csv2json(csvArray){
-    let jsonArray = [];
-
-    let RowArray = csvArray.split('\n');
-    let items = RowArray[0].split(',');
-    for(let i = 1; i < RowArray.length; i++){
-        let cellArray = RowArray[i].split(',');
-        let a_line = new Object();
-        for(let j = 0; j < items.length; j++){
-            a_line[items[j]] = cellArray[j];
-        }
-        jsonArray.push(a_line);
-    }
-    return jsonArray;
-}
-
-// conf to json.
-function confTojson(jsonArray){
-    let first = jsonArray.lastIndexOf( '[' );
-    let second = jsonArray.lastIndexOf( ']' );
-
-    let result = jsonArray.substr( 0, first );
-    let result2 = jsonArray.substr( first,  second);
-    let mojiJp = "";
-    let mojiUs = "";
-
-    let lineJP = result.split('\n');
-    let lineUS = result2.split('\n');
-    let jsonData = [];
-
-    for(let i=1;i<lineJP.length-2;i++){
-        mojiJp = lineJP[i].split('=');
-        mojiUs = lineUS[i-1].split('=');
-        let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
-        jsonData.push(buf);
-    }
-    return jsonData;
-}
-
-// xml to json
-function xmlTojson(xmlArray){
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlArray, "application/xml");
-    let nl = doc.getElementsByTagName("item");
-    let matches = nl.length;
-
-    let jsonData = [];
-    for (let i = 0; i < matches; i++ ) {
-        let e = nl.item(i);
-        let youso = [];
-        for(let j = 0;j < Math.floor(e.childNodes.length/2);j++){
-            let type = e.getElementsByTagName(e.childNodes[1+j*2].nodeName);
-            youso.push(type);
-        }
-        let buf = {type:youso[0].item(0).textContent, japan:youso[1].item(0).textContent, us:youso[2].item(0).textContent};
-        jsonData.push(buf);
-    }
-    return jsonData;
-}
-
 // csvファイルへのファイル書き込み.
-function WriteToCSV(){
-    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    let hugastring = json2csv(huga);
-    let blob = new Blob([bom, hugastring],{type:"text/plan"});
+window.WriteToCSV = () =>{
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    const hugastring = json2csv(huga);
+    const blob = new Blob([bom, hugastring],{type:"text/plan"});
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = '作ったファイル.csv';
@@ -341,7 +262,7 @@ function WriteToCSV(){
 }
 
 // confファイルへの書き込み.
-function WriteConfigFile(){
+window.WriteConfigFile = () => {
     let writeString = "";
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     writeString += "[japan] \n";
@@ -361,7 +282,7 @@ function WriteConfigFile(){
 }
 
 // jsonデータをxmlファイルとして出力する
-function WriteXmlFile(){
+window.WriteXmlFile = () =>{
     let writeString = "";
     let bom = new Uint8Arr
     ay([0xEF, 0xBB, 0xBF]);
