@@ -184,11 +184,21 @@ function ChangeText(input){
 }
 
 function CheckAlreadyResister(input){
+    const cell = MaxKeyValue();
+    let cnt = 0;
     for(let j = 0;j < huga.length;j++){
-        if(input["type"] == huga[j]["type"] || 
-            input["japan"] ==  huga[j]["japan"] || 
-            input["us"] == huga[j]["us"]){
+        for(let i = 0;i < cell.cnt;i++){
+            if(huga[j][Object.keys(huga[cell.num])[i]] ==
+                input[Object.keys(huga[cell.num])[i]]){
+                    console.log("data is same");
+                    cnt ++;
+            }else{
+                console.log("data is different");
+            }
+            
+            if(cnt >= cell.cnt){
                 return j;
+            }
         }
     }
     return -1;
@@ -218,8 +228,8 @@ window.ClickFunc = () =>{
         if(chkFlg === false){
             alert("未入力エラー");
         }else{
-            // let ret = CheckAlreadyResister(data);
-            const ret = -1;
+            const ret = CheckAlreadyResister(data);
+            // const ret = -1;
             if(ret != -1){
                 alert(ret+"番目ですでに登録済み");
             }else{
