@@ -24,17 +24,17 @@ export function ReadCsvFile(reader, huga){
     return huga;
 }
 
-export function ReadConfFile(reader, huga){
-    if(FileInfo.ChgFlg == 0){
-        huga = confTojson(reader.result);
-    }else{
-        const confDatas = confTojson(reader.result);
-        for(const confdata of confDatas){
-            huga.push(confdata);
-        }
-    }
-    return huga;
-}
+// export function ReadConfFile(reader, huga){
+//     if(FileInfo.ChgFlg == 0){
+//         huga = confTojson(reader.result);
+//     }else{
+//         const confDatas = confTojson(reader.result);
+//         for(const confdata of confDatas){
+//             huga.push(confdata);
+//         }
+//     }
+//     return huga;
+// }
 
 export function ReadXmlFile(reader, huga){
     if(FileInfo.ChgFlg == 0){
@@ -50,7 +50,7 @@ export function ReadXmlFile(reader, huga){
 
 
 // json to csv変換.
-function json2csv(json) {
+export function json2csv(json) {
     let header = Object.keys(json[0]).join(',') + "\n";
 
     let body = json.map(function(d){
@@ -80,45 +80,43 @@ function csv2json(csvArray){
 }
 
 // conf to json.
-function confTojson(jsonArray){
-    let first = jsonArray.lastIndexOf( '[' );
-    let second = jsonArray.lastIndexOf( ']' );
+// function confTojson(jsonArray){
+//     let first = jsonArray.lastIndexOf( '[' );
+//     let second = jsonArray.lastIndexOf( ']' );
 
-    let result = jsonArray.substr( 0, first );
-    let result2 = jsonArray.substr( first,  second);
-    let mojiJp = "";
-    let mojiUs = "";
+//     let result = jsonArray.substr( 0, first );
+//     let result2 = jsonArray.substr( first,  second);
+//     let mojiJp = "";
+//     let mojiUs = "";
 
-    let lineJP = result.split('\n');
-    let lineUS = result2.split('\n');
-    let jsonData = [];
+//     let lineJP = result.split('\n');
+//     let lineUS = result2.split('\n');
+//     let jsonData = [];
 
-    for(let i=1;i<lineJP.length-2;i++){
-        mojiJp = lineJP[i].split('=');
-        mojiUs = lineUS[i-1].split('=');
-        let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
-        jsonData.push(buf);
-    }
-    return jsonData;
-}
+//     for(let i=1;i<lineJP.length-2;i++){
+//         mojiJp = lineJP[i].split('=');
+//         mojiUs = lineUS[i-1].split('=');
+//         let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
+//         jsonData.push(buf);
+//     }
+//     return jsonData;
+// }
 
 // xml to json
 function xmlTojson(xmlArray){
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(xmlArray, "application/xml");
-    let nl = doc.getElementsByTagName("item");
-    let matches = nl.length;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlArray, "application/xml");
+    const nl = doc.getElementsByTagName("item");
 
-    let jsonData = [];
-    for (let i = 0; i < matches; i++ ) {
-        let e = nl.item(i);
-        let youso = [];
+    const jsonData = [];
+    for(const e of nl){
+        const buf = {};
         for(let j = 0;j < Math.floor(e.childNodes.length/2);j++){
-            let type = e.getElementsByTagName(e.childNodes[1+j*2].nodeName);
-            youso.push(type);
+            const type = e.getElementsByTagName(e.childNodes[1+j*2].nodeName);
+            buf[type[0].tagName] = type[0].textContent;
         }
-        let buf = {type:youso[0].item(0).textContent, japan:youso[1].item(0).textContent, us:youso[2].item(0).textContent};
         jsonData.push(buf);
     }
+
     return jsonData;
 }

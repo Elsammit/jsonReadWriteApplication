@@ -1,6 +1,6 @@
 import {ReadJsonFile, ReadCsvFile, ReadConfFile, ReadXmlFile} from './FileProcessing.js';
 
-let reader = new FileReader();
+const reader = new FileReader();
 
 let huga = [];      // 管理するデータリスト
 let fileCount = 1;  // ファイル選択widget数.
@@ -78,9 +78,6 @@ const ReadFileToMem = () =>{
     }else if( /\.(csv)$/i.test(FileInfo.InputFile.files[0].name)){
         console.log("csvFile!!");
         huga = ReadCsvFile(reader, huga);
-    }else if(/\.(conf)$/i.test(FileInfo.InputFile.files[0].name)){
-        console.log("confFile!!");
-        huga = ReadConfFile(reader, huga);
     }else if(/\.(xml)$/i.test(FileInfo.InputFile.files[0].name)){
         console.log("XmlFile!!");
         huga = ReadXmlFile(reader, huga);
@@ -116,7 +113,7 @@ const AddTableBody = () =>{
         const cell1 = row.insertCell(0);
         for(let k=0;k<Object.keys(huga[j]).length;k++){
             const cell2 = row.insertCell(k+1);
-            cell2.innerHTML = `<input type='text' id=${Object.keys(huga[j])[k] + j} onChange=ChangeText(${j*10+1}) value=${Object.values(huga[j])[k]}>`
+            cell2.innerHTML = `<input type='text' id=${Object.keys(huga[j])[k] + j} onChange=ChangeText(${j}) value=${Object.values(huga[j])[k]}>`
         }
         cell1.innerHTML = `<input type="radio" name="selectBtn" value='select${j}'>`;
     }
@@ -161,25 +158,11 @@ const MaxKeyValue = () => {
 }
 
 // テーブル内文字列変更時の割り込み処理.
-function ChangeText(input){
-    let cell = input % 10;
-    let Rows = Math.floor(input / 10);
-    let idbuf;
-    switch(cell){
-        case 1:
-            idbuf = "type" + Rows;
-            huga[Rows].type = document.getElementById(idbuf).value;
-            break;
-        case 2:
-            idbuf = "japan" + Rows;
-            huga[Rows].japan = document.getElementById(idbuf).value;
-            break;
-        case 3:
-            idbuf = "us" + Rows;
-            huga[Rows].us = document.getElementById(idbuf).value;
-            break;
-        default:
-            break;
+window.ChangeText = (input) =>{
+    for(let i=0;i<Object.keys(huga[input]).length;i++){
+        console.log(Object.keys(huga[input])[i]);
+        huga[input][Object.keys(huga[input])[i]] = 
+            document.getElementById(Object.keys(huga[input])[i] + input).value;
     }
 }
 
@@ -206,7 +189,6 @@ function CheckAlreadyResister(input){
 
 //　テーブルへのデータ追加
 window.ClickFunc = () =>{
-    // let cells = {};
     let chkFlg = false;
     new Promise((resolve, reject)=>{
         const cell = MaxKeyValue();
@@ -229,15 +211,14 @@ window.ClickFunc = () =>{
             alert("未入力エラー");
         }else{
             const ret = CheckAlreadyResister(data);
-            // const ret = -1;
             if(ret != -1){
                 alert(ret+"番目ですでに登録済み");
             }else{
                 huga.push(data);
-                let table = document.getElementById('table1'); 
+                const table = document.getElementById('table1'); 
                 table.style.visibility = "visible";
-                let row = table.insertRow(-1); 
-                let cell1 = row.insertCell(0);
+                const row = table.insertRow(-1); 
+                const cell1 = row.insertCell(0);
             
                 cell1.innerHTML = `<input type="radio" name="selectBtn" value=${huga.length} onChange="SelectCheck()">` 
                 for(let i = 0;i < cells.cnt;i++){
@@ -272,37 +253,44 @@ window.WriteToCSV = () =>{
 }
 
 // confファイルへの書き込み.
-window.WriteConfigFile = () => {
-    let writeString = "";
-    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    writeString += "[japan] \n";
-    for(let i = 0; i < huga.length; i++){
-        writeString += huga[i].type+"="+ huga[i].japan+"\n";
-    }
-    writeString += "\n";
-    writeString += "[us] \n";
-    for(let i = 0; i < huga.length; i++){
-        writeString += huga[i].type+"="+ huga[i].us+"\n";
-    }    
-    let blob = new Blob([bom, writeString],{type:"text/plan"});
-    let link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = '作ったファイル.conf';
-    link.click();
-}
+// window.WriteConfigFile = () => {
+//     let writeString = "";
+//     let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+
+//     for(let i = 0; i < huga.length; i++){
+//         for(let k=0;k<Object.keys(huga[i]).length;k++){
+//             writeString += `[${Object.keys(huga[i])[k]}] \n`;
+//             writeString += `${huga[i][Object.keys(huga[i])[k]]} \n`;
+//         }
+//     }
+
+//     writeString += "[japan] \n";
+//     for(let i = 0; i < huga.length; i++){
+//         writeString += huga[i].type+"="+ huga[i].japan+"\n";
+//     }
+//     writeString += "\n";
+//     writeString += "[us] \n";
+//     for(let i = 0; i < huga.length; i++){
+//         writeString += huga[i].type+"="+ huga[i].us+"\n";
+//     }    
+//     let blob = new Blob([bom, writeString],{type:"text/plan"});
+//     let link = document.createElement('a');
+//     link.href = URL.createObjectURL(blob);
+//     link.download = '作ったファイル.conf';
+//     link.click();
+// }
 
 // jsonデータをxmlファイルとして出力する
 window.WriteXmlFile = () =>{
     let writeString = "";
-    let bom = new Uint8Arr
-    ay([0xEF, 0xBB, 0xBF]);
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
     writeString += '<?xml version="1.0" encoding="UTF-8"?> \n';
     writeString += '<lists> \n';
     for(let i = 0; i < huga.length; i++){
         writeString += '    <item> \n';
-        writeString += '        <type>' + huga[i].type + '</type> \n';
-        writeString += '        <japan>' + huga[i].japan + '</japan> \n';
-        writeString += '        <us>' + huga[i].us + '</us> \n';
+        for(let k=0;k<Object.keys(huga[i]).length;k++){
+            writeString += `        <${Object.keys(huga[i])[k]}>${huga[i][Object.keys(huga[i])[k]]}</${Object.keys(huga[i])[k]}> \n`
+        }
         writeString += '    </item> \n';
     }
     writeString += '</lists> \n';
@@ -315,22 +303,22 @@ window.WriteXmlFile = () =>{
 
 // データ削除のためのポップアップ作成用
  window.DoFirstScript = () =>{
-    let dialog = document.querySelector('dialog');
-    let btn_show = document.getElementById('showp');
-    let btn_close = document.getElementById('closep');
-    let btn_delete = document.getElementById('DeleteOK');
+    const dialog = document.querySelector('dialog');
+    const btn_show = document.getElementById('showp');
+    const btn_close = document.getElementById('closep');
+    const btn_delete = document.getElementById('DeleteOK');
 
     btn_show.addEventListener('click', function() {
-        let r = $('input[name="selectBtn"]:checked').val();
+        const r = $('input[name="selectBtn"]:checked').val();
       dialog.show();
     }, false);
     btn_close.addEventListener('click', function() {
       dialog.close();
     }, false);
     btn_delete.addEventListener('click', function() {
-        let r = $('input[name="selectBtn"]:checked').val();
-        let table = document.getElementById('table1'); 
-        let rStr = Number(r.substr("select".length - r.length));
+        const r = $('input[name="selectBtn"]:checked').val();
+        const table = document.getElementById('table1'); 
+        const rStr = Number(r.substr("select".length - r.length));
 
         huga.splice(rStr,1);
         table.deleteRow(rStr);
