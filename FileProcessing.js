@@ -1,6 +1,57 @@
 'use strict'
 
-export function ReadJsonFile(reader, huga){
+let huga = [];      // 管理するデータリスト
+
+const reader = new FileReader();
+let FileInfo = {
+    InputFile:'',
+    ChgFlg:0,
+}
+
+export function SetFileInfo(fInfo, flg){
+    FileInfo.InputFile = fInfo;
+    FileInfo.ChgFlg = flg;
+}
+
+export function GetMgmtDatas(){
+    return huga;
+}
+
+export function SetMgmtDatas(datas){
+    huga = datas;
+}
+
+export function PushMgmtData(data){
+    huga.push(data);
+}
+
+export function ReadFileFunc(resolve){
+    reader.readAsText(FileInfo.InputFile.files[0], 'UTF-8');
+    console.log(FileInfo.InputFile.files[0]);
+    reader.onload = () =>{
+        ReadFileToMem();
+        resolve();
+    }
+}
+
+export function ReadFileToMem(){
+    if( /\.(json)$/i.test(FileInfo.InputFile.files[0].name) ){
+        console.log("jsonFile!!");
+        ReadJsonFile(reader);
+    }else if( /\.(csv)$/i.test(FileInfo.InputFile.files[0].name)){
+        console.log("csvFile!!");
+        ReadCsvFile(reader);
+    }else if(/\.(xml)$/i.test(FileInfo.InputFile.files[0].name)){
+        console.log("XmlFile!!");
+        ReadXmlFile(reader);
+    }else{
+        console.log("??? file!! " + FileInfo.InputFile.files[0].name);
+        alert("csvファイルかjsonファイルを選択ください");
+        return;
+    }
+}
+
+function ReadJsonFile(reader){
     if(FileInfo.ChgFlg == 0){
         huga = JSON.parse(reader.result);
     }else{
@@ -9,10 +60,9 @@ export function ReadJsonFile(reader, huga){
             huga.push(jdata);
         }
     }
-    return huga;
 }
 
-export function ReadCsvFile(reader, huga){
+function ReadCsvFile(reader){
     if(FileInfo.ChgFlg == 0){
         huga = csv2json(reader.result);
     }else{
@@ -21,7 +71,6 @@ export function ReadCsvFile(reader, huga){
             huga.push(cdata);
         }
     }
-    return huga;
 }
 
 // export function ReadConfFile(reader, huga){
@@ -36,7 +85,7 @@ export function ReadCsvFile(reader, huga){
 //     return huga;
 // }
 
-export function ReadXmlFile(reader, huga){
+function ReadXmlFile(reader){
     if(FileInfo.ChgFlg == 0){
         huga = xmlTojson(reader.result);
     }else{
@@ -45,7 +94,6 @@ export function ReadXmlFile(reader, huga){
             huga.push(xdata);
         }
     }
-    return huga;
 }
 
 
@@ -119,4 +167,36 @@ function xmlTojson(xmlArray){
     }
 
     return jsonData;
+}
+
+export function MaxKeyValue(){
+    let cell = {num:0,cnt:0};
+    for(let j = 0;j < huga.length;j++){
+        const dataCellCnt = Object.keys(huga[j]).length;
+        if(cell.cnt < dataCellCnt){
+            cell.cnt = dataCellCnt;
+            cell.num = j;
+        }
+    }
+    return cell;
+}
+
+export function CheckAlreadyResister(input){
+    const cell = MaxKeyValue();
+    let cnt = 0;
+    for(let j = 0;j < GetMgmtDatas().length;j++){
+        for(let i = 0;i < cell.cnt;i++){
+            if(GetMgmtDatas()[j][Object.keys(GetMgmtDatas()[cell.num])[i]] ==
+                input[Object.keys(GetMgmtDatas()[cell.num])[i]]){
+                    console.log("data is same");
+                    cnt ++;
+            }else{
+                console.log("data is different");
+            }
+            if(cnt >= cell.cnt){
+                return j;
+            }
+        }
+    }
+    return -1;
 }

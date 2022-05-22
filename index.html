@@ -8,6 +8,17 @@
             <link rel="stylesheet" href="style.css">
         </head>
         <body onload="DoFirstScript()" id="MainArea">
+            <h1>ファイル形式変更サイト</h1>
+            <h3>ファイルデータを変換すること出来るサイトになります。</h3>
+            <h3>変更出来るファイル形式は、</h3>
+            <h3>
+                <ul class="messageInfo">
+                    <li>json</li>
+                    <li>csv</li>
+                    <li>xml</li>
+                </ul>
+                の3種類です。
+            </h3>
             <div id = "inputFileList">
                 <p>①ファイルを選択ください</p>
                 <input id="file1" type="file" onChange="fileChanged(this)" multiple>
@@ -38,7 +49,6 @@
                 </div>
                 <table border="1" id="table1">
                 </table>
-
             </div>
         </body>
     </html>

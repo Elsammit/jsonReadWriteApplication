@@ -1,3 +1,12 @@
+.messageInfo{
+    display: flex;
+}
+
+.messageInfo li{
+    /* list-style: none; */
+    margin-left: 50px;
+}
+
 #InputList{
     opacity:0.0;
 }
