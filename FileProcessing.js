@@ -73,18 +73,6 @@ function ReadCsvFile(reader){
     }
 }
 
-// export function ReadConfFile(reader, huga){
-//     if(FileInfo.ChgFlg == 0){
-//         huga = confTojson(reader.result);
-//     }else{
-//         const confDatas = confTojson(reader.result);
-//         for(const confdata of confDatas){
-//             huga.push(confdata);
-//         }
-//     }
-//     return huga;
-// }
-
 function ReadXmlFile(reader){
     if(FileInfo.ChgFlg == 0){
         huga = xmlTojson(reader.result);
@@ -126,29 +114,6 @@ function csv2json(csvArray){
     }
     return jsonArray;
 }
-
-// conf to json.
-// function confTojson(jsonArray){
-//     let first = jsonArray.lastIndexOf( '[' );
-//     let second = jsonArray.lastIndexOf( ']' );
-
-//     let result = jsonArray.substr( 0, first );
-//     let result2 = jsonArray.substr( first,  second);
-//     let mojiJp = "";
-//     let mojiUs = "";
-
-//     let lineJP = result.split('\n');
-//     let lineUS = result2.split('\n');
-//     let jsonData = [];
-
-//     for(let i=1;i<lineJP.length-2;i++){
-//         mojiJp = lineJP[i].split('=');
-//         mojiUs = lineUS[i-1].split('=');
-//         let buf = {type:mojiJp[0], japan:mojiJp[1], us:mojiUs[1]};
-//         jsonData.push(buf);
-//     }
-//     return jsonData;
-// }
 
 // xml to json
 function xmlTojson(xmlArray){

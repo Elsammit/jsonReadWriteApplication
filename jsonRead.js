@@ -20,13 +20,13 @@ window.fileChanged = (input) => {
         const ParentInput = document.getElementById("inputFileList");
         ParentInput.appendChild(MessageTag);
     }
-    DoFileToListAdd();   // リストへの追加処理.
+    DoFileToListAdd(0);   // リストへの追加処理.
     AddFileSelectChild();
 }
 
 window.fileAdd = (input) =>{
     SetFileInfo(input, 1);
-    DoFileToListAdd();
+    DoFileToListAdd(1);
     AddFileSelectChild();
 }
 
@@ -42,7 +42,7 @@ function AddFileSelectChild(){
 }
 
 // ファイルからデータを読み出してデータをリストへ書き込み.
-function DoFileToListAdd(){
+function DoFileToListAdd(flg){
     console.log("Promise3");
     const table = document.getElementById('table1');
     table.style.visibility = "visible"; 
@@ -55,7 +55,9 @@ function DoFileToListAdd(){
     }).then( () =>{
         AddTableTitle();
         AddTableBody();
-        AdditionalScreen();
+        if(flg === 0){
+            AdditionalScreen();
+        }
     });                                                                                 
 }
 
@@ -80,13 +82,13 @@ const AddTableBody = () =>{
     const table = document.getElementById('table1');
     for(let j = 0;j < GetMgmtDatas().length;j++){
         const row = table.insertRow(-1);
+        row.setAttribute("id", `rowId${j}`);
         const cell1 = row.insertCell(0);
         for(let k=0;k<Object.keys(GetMgmtDatas()[j]).length;k++){
             const cell2 = row.insertCell(k+1);
             cell2.innerHTML = `<input type='text' id=${Object.keys(GetMgmtDatas()[j])[k] + j} onChange=ChangeText(${j}) value=${Object.values(GetMgmtDatas()[j])[k]}>`
         }
-        // cell1.innerHTML = `<input type="radio" name="selectBtn" value='select${j}'>`;
-        cell1.innerHTML = `<button onClick="DeleteData(${j})">データ削除</button>`;
+        cell1.innerHTML = `<button onClick="DeleteData(rowId${j})">データ削除</button>`;
     }
 }
 
@@ -155,10 +157,10 @@ window.ClickFunc = () =>{
                 const table = document.getElementById('table1'); 
                 table.style.visibility = "visible";
                 const row = table.insertRow(-1); 
+                row.setAttribute("id", `rowId${GetMgmtDatas().length}`);
                 const cell1 = row.insertCell(0);
             
-                // cell1.innerHTML = `<input type="radio" name="selectBtn" value=${GetMgmtDatas().length} onChange="SelectCheck()">` 
-                cell1.innerHTML = `<button onClick="DeleteData(${GetMgmtDatas().length})">データ削除</button>`;
+                cell1.innerHTML = `<button onClick="DeleteData(rowId${GetMgmtDatas().length})">データ削除</button>`;
                 for(let i = 0;i < cells.cnt;i++){
                     const cellc = row.insertCell(i+1);
                     cellc.innerHTML = "<input type='text' value='" + inputVal[i] + "'>";
@@ -168,12 +170,25 @@ window.ClickFunc = () =>{
     });
 }
 
-
 window.DeleteData = (i) =>{
-    alert(`${i} 行を削除`);
-    const table = document.getElementById('table1'); 
-    GetMgmtDatas().splice(i,1);
-    table.deleteRow(i);
+    const table = document.getElementById('table1');
+    const rows = table.querySelectorAll('tr');
+    let selectRow = null;
+    console.log(i.id);
+    for(let row of rows){
+        console.log(row.rowIndex, row.id);
+        if(i.id == row.id){
+            selectRow = row;
+        }
+    }
+    if(selectRow != null){
+        if(confirm(`${selectRow.rowIndex} 行目を削除しますか？`)){
+            const table = document.getElementById('table1'); 
+            GetMgmtDatas().splice(selectRow.rowIndex,1);
+            table.deleteRow(selectRow.rowIndex);
+            alert(`削除しました`);
+        }
+    }
 }
 
 // jsonファイルとして出力
@@ -216,30 +231,4 @@ window.WriteXmlFile = () =>{
     link.href = URL.createObjectURL(blob);
     link.download = '作ったファイル.xml';
     link.click();
-}
-
-// データ削除のためのポップアップ作成用
- window.DoFirstScript = () =>{
-    const dialog = document.querySelector('dialog');
-    const btn_show = document.getElementById('showp');
-    const btn_close = document.getElementById('closep');
-    const btn_delete = document.getElementById('DeleteOK');
-
-    btn_show.addEventListener('click', function() {
-        console.log("delete btn push");
-        // const r = $('input[name="selectBtn"]:checked').val();
-      dialog.show();
-    }, false);
-    btn_close.addEventListener('click', function() {
-      dialog.close();
-    }, false);
-    btn_delete.addEventListener('click', function() {
-        const r = $('input[name="selectBtn"]:checked').val();
-        const table = document.getElementById('table1'); 
-        const rStr = Number(r.substr("select".length - r.length));
-
-        GetMgmtDatas().splice(rStr,1);
-        table.deleteRow(rStr);
-        dialog.close();
-      }, false);
 }
