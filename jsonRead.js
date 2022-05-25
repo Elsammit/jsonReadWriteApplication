@@ -1,8 +1,7 @@
-// import {ReadJsonFile, ReadCsvFile, ReadXmlFile} from './FileProcessing.js';
 import {GetMgmtDatas, SetMgmtDatas, 
         PushMgmtData, SetFileInfo,
         ReadFileFunc, MaxKeyValue, 
-        CheckAlreadyResister} from './FileProcessing.js';
+        CheckAlreadyResister, json2csv} from './FileProcessing.js';
 
 let fileCount = 1;  // ファイル選択widget数.
 
@@ -93,7 +92,7 @@ const AddTableBody = () =>{
 }
 
 const AdditionalScreen = () =>{
-    const div = document.getElementById('InsertInfo');
+    const div = document.getElementById('AddBtnId');
     const ul = document.createElement('ul');
     new Promise((resolve, reject) => {
         const cell = MaxKeyValue();
@@ -110,7 +109,7 @@ const AdditionalScreen = () =>{
             li.appendChild(input);
             ul.appendChild(li);
         }
-        div.appendChild(ul);
+        div.before(ul);
         (() =>{
             const InputList = document.getElementById('InputList');
             InputList.style.opacity = 1.0;
