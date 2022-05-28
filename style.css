@@ -1,37 +1,68 @@
+header{
+    margin-left: 30px;
+}
+
+.MainArea{
+    width: 70%;
+    float: left;
+    margin-left: 30px;
+}
+
+#Message img{
+    margin-left: 100px;
+}
+
+.SideSelectMenu{
+    width: 500px;
+    height:800px;
+    overflow-y: scroll;
+    float: right;
+    position:fixed;
+    position:-webkit-sticky;
+    top: 100px;
+    right:20px;
+    
+
+}
+
+#inputArea{
+    padding:10px;
+    border: 5px solid #000000;
+    width:350px;  
+    border-radius: 10px;  
+    background-color: #acf;
+}
+
 .messageInfo{
     display: flex;
 }
 
 .messageInfo li{
-    /* list-style: none; */
     margin-left: 50px;
 }
 
 #InputList{
     opacity:0.0;
-}
-
-#inputFileList,
-#InsertInfo,
-#OutputFile,
-#DeleteItem{
-    margin-top:30px;
-    margin-bottom:30px;
-    padding:10px;
-    border: 5px solid #000000;
-    width:500px;  
-    border-radius: 10px;  
-    background-color: #acf;
-    margin-left:30px;
+    width:450px;  
 }
 
 #table1{
-    margin-left:30px;
     visibility: hidden;
+    width:100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+#table1 input, #table1 textarea{
+    width:90%;
+}
+
+#table1 > td, #table1 > th{
+    width:50px;
 }
 
 #Message{
-    margin-left:30px;
+    font-weight:bold;
 }
 
 #table1 th{

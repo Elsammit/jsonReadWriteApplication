@@ -7,48 +7,56 @@
             <script type="module" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <link rel="stylesheet" href="style.css">
         </head>
-        <body id="MainArea">
-            <h1>ファイル形式変更サイト</h1>
-            <h3>ファイルデータを変換すること出来るサイトになります。</h3>
-            <h3>変更出来るファイル形式は、</h3>
-            <h3>
-                <ul class="messageInfo">
-                    <li>json</li>
-                    <li>csv</li>
-                    <li>xml</li>
-                </ul>
-                の3種類です。
-            </h3>
-            <div id = "inputFileList">
-                <p>①ファイルを選択ください</p>
-                <input id="file1" type="file" onChange="fileChanged(this)" multiple>
-            </div>
-            <div id="InputList">
-                <div id="InsertInfo">
-                    <p>③追加するリストを記入ください</p>
-                    <button id="AddBtnId" type="button" onClick="ClickFunc()" >追加</button>
-                </div>
-                <div id="OutputFile">
-                    <p>④出力するファイルを選択ください</p>
-                    <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button>
-                    <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button>
-                    <button type="button" onClick="WriteXmlFile()" >ファイル書き込み(xml)</button>
-                </div>
-                <dialog>
-                    <label>タイプ:</label>
-                    <p>選択したデータを削除しますか？</p>
-                    <button id="DeleteOK">OK</button>
-                    <button id="closep">キャンセル</button>
-                </dialog>
-                <div id="DeleteItem">
-                    <p>⑤削除したい項目があればラジオボタン選択の上ボタンを押下</p>
-                    <button id="showp">データ削除</button>
-                </div>
+        <body>
+            <header>
+                <h1>ファイル形式変更サイト</h1>
+                <h2>ファイルデータを変換すること出来るサイトになります。</h2>
+                <h2>変更出来るファイル形式は、</h2>
+                <h2>
+                    <ul class="messageInfo">
+                        <li>json</li>
+                        <li>csv</li>
+                        <li>xml</li>
+                    </ul>
+                    の3種類です。
+                </h2>
+            </header>
+            <div class="MainArea">
                 <div id="Message">
-                    <p>項目リスト 保存時、こちらのリストの内容が保存されます</p>
+                    <h3>項目リスト 保存時、こちらのリストの内容が保存されます</h3>
+                    <img src="./image/downArrow.png" alt="下矢印画像" height="80px" width="300px">
+                    <table border="1" id="table1">
+                    </table>
                 </div>
-                <table border="1" id="table1">
-                </table>
+            </div>
+            <div class = "SideSelectMenu">
+                <input type="checkbox" id="menuIsHidden" checked>
+                <label for="menuIsHidden">:表示/非表示</label>
+                <div id = "inputArea">
+                    <h1>ファイル入出力指定</h1>
+                    <div id = "inputFileList">
+                        <p>①ファイルを選択ください</p>
+                        <input id="file1" type="file" onChange="fileChanged(this)" multiple>
+                    </div>
+                    <div id="InputList">
+                        <div id="InsertInfo">
+                            <p>③追加するリストを記入ください</p>
+                            <button id="AddBtnId" type="button" onClick="ClickFunc()" >追加</button>
+                        </div>
+                        <div id="OutputFile">
+                            <p>④出力するファイルを選択ください</p>
+                            <button type="button" onClick="WriteToFile()" >ファイル書き込み(json)</button><br/>
+                            <button type="button" onClick="WriteToCSV()" >ファイル書き込み(csv)</button><br/>
+                            <button type="button" onClick="WriteXmlFile()" >ファイル書き込み(xml)</button>
+                        </div>
+                        <dialog>
+                            <label>タイプ:</label>
+                            <p>選択したデータを削除しますか？</p>
+                            <button id="DeleteOK">OK</button>
+                            <button id="closep">キャンセル</button>
+                        </dialog>
+                    </div>
+                </div>
             </div>
         </body>
     </html>

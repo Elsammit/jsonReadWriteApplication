@@ -85,7 +85,9 @@ const AddTableBody = () =>{
         const cell1 = row.insertCell(0);
         for(let k=0;k<Object.keys(GetMgmtDatas()[j]).length;k++){
             const cell2 = row.insertCell(k+1);
-            cell2.innerHTML = `<input type='text' id=${Object.keys(GetMgmtDatas()[j])[k] + j} onChange=ChangeText(${j}) value=${Object.values(GetMgmtDatas()[j])[k]}>`
+            cell2.innerHTML = `<input type='text' id=${Object.keys(GetMgmtDatas()[j])[k] + j} 
+                                onChange=ChangeText(${j}) value=${Object.values(GetMgmtDatas()[j])[k]}
+                                width:90%>`
         }
         cell1.innerHTML = `<button onClick="DeleteData(rowId${j})">データ削除</button>`;
     }
@@ -231,3 +233,14 @@ window.WriteXmlFile = () =>{
     link.download = '作ったファイル.xml';
     link.click();
 }
+
+menuIsHidden.addEventListener('change', (event) =>{
+    let menuIsHidden = document.getElementById('menuIsHidden');
+    let inputArea = document.getElementById('inputArea');
+    console.log(inputArea);
+    if(menuIsHidden.checked){
+        inputArea.style.visibility = "visible";
+    }else{
+        inputArea.style.visibility = "hidden";
+    }
+});
