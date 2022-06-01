@@ -68,3 +68,18 @@ header{
 #table1 th{
     background-color: #dff;
 }
+
+#table1 td{
+    text-align: center;
+    
+}
+
+#table1 td button{
+    width: 100%;
+}
+
+input[type=checkbox] {
+	transform: scale(1.5);
+	margin: 10px 10px 20px 20px;
+    padding:20px;
+}
