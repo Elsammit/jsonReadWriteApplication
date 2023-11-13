@@ -42,7 +42,6 @@ function AddFileSelectChild(){
 
 // ファイルからデータを読み出してデータをリストへ書き込み.
 function DoFileToListAdd(flg){
-    console.log("Promise3");
     const table = document.getElementById('table1');
     table.style.visibility = "visible"; 
     table.deleteTHead();

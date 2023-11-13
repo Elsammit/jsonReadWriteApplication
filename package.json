@@ -1,0 +1,22 @@
+{
+  "name": "jsonreadwriteapplication",
+  "version": "1.0.0",
+  "description": "jsonファイル、csvファイルxmlファイルのファイルフォーマットを相互に変換するツールです。",
+  "main": "FileProcessing.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Elsammit/jsonReadWriteApplication.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Elsammit/jsonReadWriteApplication/issues"
+  },
+  "homepage": "https://github.com/Elsammit/jsonReadWriteApplication#readme",
+  "devDependencies": {
+    "electron": "^27.0.4"
+  }
+}
